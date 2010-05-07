@@ -1,0 +1,35 @@
+
+ElasticSearch.rb
+
+An ElasticSearch client with ThriftClient-like failover handling.
+
+== License
+
+Copyright 2010 Grant Rodgers. See included LICENSE file.
+
+== Features
+
+* Automatic failover and retry
+* Multiple transports and encodings (TODO)
+
+== Usage
+
+Instantiate a client:
+
+  client = ElasticSearch.new('127.0.0.1:9160')
+
+  API is subject to change, but here is a trivial example:
+
+  client.index("twitter", "tweets", "1", {:body => "elasticsearch is cool"})
+  client.get("twitter, "tweets", "1")
+
+== TODO
+
+lots! :)
+
+
+== Contributing
+
+http://github.com/grantr/elasticsearch.rb
+
+Fork, code, send pull request
