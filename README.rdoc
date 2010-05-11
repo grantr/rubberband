@@ -1,5 +1,5 @@
 
-ElasticSearch.rb
+RubberBand
 
 An ElasticSearch client with ThriftClient-like failover handling.
 
@@ -30,6 +30,6 @@ lots! :)
 
 == Contributing
 
-http://github.com/grantr/elasticsearch.rb
+http://github.com/grantr/rubberband
 
 Fork, code, send pull request
