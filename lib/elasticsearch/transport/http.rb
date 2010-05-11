@@ -1,11 +1,14 @@
 require 'patron'
+require 'cgi'
 
 module ElasticSearch
   module Transport
     class HTTP < Base
+
       class ConnectionFailed < RetryableError; end
       class HostResolutionError < RetryableError; end
       class TimeoutError < RetryableError; end
+      class RequestError < FatalError; end
 
       DEFAULTS = {
         :timeout => 5
@@ -24,16 +27,32 @@ module ElasticSearch
         request(:get, "/")
       end
 
+      #TODO should allow raw response option
       def index(index, type, id, document, options={})
         body = encoder.is_encoded?(document) ? document : encoder.encode(document)
-        request(:put, generate_path(:index => index, :type => type, :id => id), body)
-        #TODO return value
+        response = request(:put, generate_path(:index => index, :type => type, :id => id), body)
+        if response.status == 200
+          body = encoder.decode(response.body)
+          if body["ok"] == true
+            return body["_id"]
+          end
+        end
+        handle_error(response)
       end
 
       def get(index, type, id, options={})
         response = request(:get, generate_path(:index => index, :type => type, :id => id))
-        response.status == 404 ? nil : encoder.decode(response.body)
-        #TODO return structure
+        return nil if response.status == 404
+
+        if response.status == 200
+          #TODO this should be shared by whatever is composing the search result response (it is essentially one hit of a search)
+          hit = encoder.decode(response.body)
+          unescape_id!(hit)
+          set_encoding!(hit)
+          hit # { "_id", "_index", "_type", "_source" }
+        else
+          handle_error(response)
+        end
       end
 
       def search(index, type, query, options={})
@@ -43,13 +62,24 @@ module ElasticSearch
         else
           response = request(:get, generate_path(:index => index, :type => type, :id => "_search", :params => options.merge(:q => query)))
         end
-        encoder.decode(response.body)
-        #TODO return structure
+        if response.status == 200
+          results = encoder.decode(response.body)
+          
+          # unescape ids
+          results["hits"]["hits"].each do |hit|
+            unescape_id!(hit)
+            set_encoding!(hit)
+          end
+          results # {"hits"=>{"hits"=>[{"_id", "_type", "_source", "_index"}], "total"}, "_shards"=>{"failed", "total", "successful"}}
+        else
+          handle_error(response)
+        end
       end
 
       def delete(index, type, id, options={})
-        request(:delete, generate_path(:index => index, :type => type, :id => id))
-        #TODO return value
+        response = request(:delete, generate_path(:index => index, :type => type, :id => id))
+        handle_error(response) unless response.status == 200 # ElasticSearch always returns 200 on delete, even if the object doesn't exist
+        nil
       end
 
       private
@@ -60,11 +90,21 @@ module ElasticSearch
       # :params - hash of query params
       def generate_path(options)
         path = ""
-        path << "/#{Array(options[:index]).collect { |i| escape(i) }.join(",")}" if options[:index]
+        path << "/#{Array(options[:index]).collect { |i| escape(i.downcase) }.join(",")}" if options[:index]
         path << "/#{Array(options[:type]).collect { |t| escape(t) }.join(",")}" if options[:type]
         path << "/#{escape(options[:id])}" if options[:id]
         path << "?" << query_string(options[:params]) if options[:params] && !options[:params].empty?
         path
+      end
+
+      def unescape_id!(hit)
+        hit["_id"] = unescape(hit["_id"])
+        nil
+      end
+
+      def set_encoding!(hit)
+        encode_utf8(hit["_source"])
+        nil
       end
 
       # faster than CGI.escape
@@ -76,11 +116,21 @@ module ElasticSearch
         }.tr(' ', '+')
       end
 
-      # encodes the string as utf-8 in Ruby 1.9
-      # returns the unaltered string in Ruby 1.8
-      def encode_utf8(string)
-        (string.respond_to?(:force_encoding) and string.respond_to?(:encoding)) ?
-          string.force_encoding(Encoding::UTF_8) : string
+      def unescape(string)
+        CGI.unescape(string)
+      end
+
+      if ''.respond_to?(:force_encoding) && ''.respond_to?(:encoding)
+        # encodes the string as utf-8 in Ruby 1.9
+        def encode_utf8(string)
+          # ElasticSearch only ever returns json in UTF-8 (per the JSON spec) so we can use force_encoding here (#TODO what about ids? can we assume those are always ascii?)
+          string.force_encoding(Encoding::UTF_8)
+        end
+      else
+        # returns the unaltered string in Ruby 1.8
+        def encode_utf8(string)
+          string
+        end
       end
 
       # Return the bytesize of String; uses String#size under Ruby 1.8 and
@@ -103,7 +153,9 @@ module ElasticSearch
       def request(method, path, body=nil, headers={})
         begin
           puts "request: #{@session.base_url}#{path} body:#{body}"
-          @session.request(method, path, headers, :data => body)
+          response = @session.request(method, path, headers, :data => body)
+          handle_error(response) if response.status >= 500
+          response
         rescue Exception => e
           case e
           when Patron::ConnectionFailed
@@ -116,6 +168,10 @@ module ElasticSearch
             raise e
           end
         end
+      end
+
+      def handle_error(response)
+        raise RequestError, "(#{response.status}) #{response.body}"
       end
     end
   end
