@@ -1,3 +1,5 @@
+require 'client/hits'
+
 module ElasticSearch
   module Api
     module Index
@@ -22,7 +24,10 @@ module ElasticSearch
         # id
         # fields
         
-        execute(:get, options[:index], options[:type], id, options)
+        hit = execute(:get, options[:index], options[:type], id, options)
+        if hit
+          Hit.new(hit).freeze
+        end
       end
 
       #df	 The default field to use when no field prefix is defined within the query.
@@ -39,7 +44,8 @@ module ElasticSearch
         set_default_scope!(options)
 
         options = slice_hash(options, :df, :analyzer, :default_operator, :explain, :fields, :field, :sort, :from, :size, :search_type)
-        execute(:search, options[:index], options[:type], query, options)
+        response = execute(:search, options[:index], options[:type], query, options)
+        Hits.new(response).freeze
       end
 
       def delete(id, options={})
