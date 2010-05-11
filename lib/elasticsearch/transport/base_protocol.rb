@@ -9,13 +9,14 @@ module ElasticSearch
         raise "not implemented"
       end
 
-      def search(options)
+      def search(index, type, query, options={})
         raise "not implemented"
       end
 
       def delete(options)
         raise "not implemented"
       end
+
     end
   end
 end
