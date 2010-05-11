@@ -16,6 +16,14 @@ module ElasticSearch
       def default_type=(type)
         @default_type = type
       end
+
+      private
+
+      def set_default_scope!(options)
+        options[:index] ||= default_index
+        options[:type] ||= default_type
+        nil
+      end
     end
   end
 end

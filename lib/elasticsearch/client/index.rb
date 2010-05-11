@@ -2,7 +2,7 @@ module ElasticSearch
   module Api
     module Index
       def index(document, options={})
-        set_default_options!(options)
+        set_default_scope!(options)
         raise "index and type or defaults required" unless options[:index] && options[:type]
         # type
         # index
@@ -15,7 +15,7 @@ module ElasticSearch
       end
 
       def get(id, options={})
-        set_default_options!(options)
+        set_default_scope!(options)
         raise "index and type or defaults required" unless options[:index] && options[:type]
         # index
         # type
@@ -36,25 +36,19 @@ module ElasticSearch
       #size	 The number of hits to return. Defaults to 10.
       #search_type	 The type of the search operation to perform. Can be dfs_query_then_fetch, dfs_query_and_fetch, query_then_fetch, query_and_fetch. Defaults to query_then_fetch.
       def search(query, options={})
-        set_default_options!(options)
+        set_default_scope!(options)
 
         options = slice_hash(options, :df, :analyzer, :default_operator, :explain, :fields, :field, :sort, :from, :size, :search_type)
         execute(:search, options[:index], options[:type], query, options)
       end
 
       def delete(id, options={})
-        set_default_options!(options)
+        set_default_scope!(options)
         raise "index and type or defaults required" unless options[:index] && options[:type]
         execute(:delete, options[:index], options[:type], id, options)
       end
 
       private
-
-      def set_default_options!(options)
-        options[:index] ||= default_index
-        options[:type] ||= default_type
-        nil
-      end
 
       def slice_hash(hash, *keys)
         h = {}
