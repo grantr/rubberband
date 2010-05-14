@@ -16,11 +16,11 @@ module ElasticSearch
     class Hits
       attr_reader :hits, :total_entries, :_shards, :response
 
-      def initialize(response)
+      def initialize(response, ids_only=false)
         @response = response
         @total_entries = response["hits"]["total"]
         @_shards = response["_shards"]
-        populate
+        populate(ids_only)
       end
 
       def to_a
@@ -42,8 +42,8 @@ module ElasticSearch
 
       private
 
-      def populate
-        @hits = @response["hits"]["hits"].collect { |h| Hit.new(h).freeze }
+      def populate(ids_only=false)
+        @hits = @response["hits"]["hits"].collect { |h| ids_only ? h["_id"] : Hit.new(h).freeze }
       end
     end
   end

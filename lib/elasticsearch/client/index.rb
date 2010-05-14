@@ -43,9 +43,9 @@ module ElasticSearch
       def search(query, options={})
         set_default_scope!(options)
 
-        options = slice_hash(options, :df, :analyzer, :default_operator, :explain, :fields, :field, :sort, :from, :size, :search_type)
-        response = execute(:search, options[:index], options[:type], query, options)
-        Hits.new(response).freeze
+        search_options = slice_hash(options, :df, :analyzer, :default_operator, :explain, :fields, :field, :sort, :from, :size, :search_type)
+        response = execute(:search, options[:index], options[:type], query, search_options)
+        Hits.new(response, !!options[:ids_only]).freeze #ids_only returns array of ids instead of hits #TODO ids_only should only select _id field
       end
 
       def delete(id, options={})
