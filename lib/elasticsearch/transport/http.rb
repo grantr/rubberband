@@ -68,7 +68,7 @@ module ElasticSearch
       def search(index, type, query, options={})
         if query.is_a?(Hash)
           # patron cannot submit get requests with content, so if query is a hash, post it instead (assume a query hash is using the query dsl)
-          response = request(:post, generate_path(:index => index, :type => type, :id => "_search", :params => options), encoder.encode(:query => query))
+          response = request(:post, generate_path(:index => index, :type => type, :id => "_search", :params => options), encoder.encode(query))
         else
           response = request(:get, generate_path(:index => index, :type => type, :id => "_search", :params => options.merge(:q => query)))
         end
