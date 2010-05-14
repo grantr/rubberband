@@ -30,6 +30,12 @@ module ElasticSearch
         end
       end
 
+      def delete(id, options={})
+        set_default_scope!(options)
+        raise "index and type or defaults required" unless options[:index] && options[:type]
+        execute(:delete, options[:index], options[:type], id, options)
+      end
+
       #df	 The default field to use when no field prefix is defined within the query.
       #analyzer	 The analyzer name to be used when analyzing the query string.
       #default_operator	 The default operator to be used, can be AND or OR. Defaults to OR.
@@ -48,11 +54,17 @@ module ElasticSearch
         Hits.new(response, !!options[:ids_only]).freeze #ids_only returns array of ids instead of hits #TODO ids_only should only select _id field
       end
 
-      def delete(id, options={})
+      #df	 The default field to use when no field prefix is defined within the query.
+      #analyzer	 The analyzer name to be used when analyzing the query string.
+      #default_operator	 The default operator to be used, can be AND or OR. Defaults to OR.
+      def count(query, options={})
         set_default_scope!(options)
-        raise "index and type or defaults required" unless options[:index] && options[:type]
-        execute(:delete, options[:index], options[:type], id, options)
+
+        count_options = slice_hash(options, :df, :analyzer, :default_operator)
+        response = execute(:count, options[:index], options[:type], query, count_options)
+        response["count"].to_i #TODO check if count is nil
       end
+
 
       private
 

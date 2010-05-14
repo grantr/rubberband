@@ -59,6 +59,12 @@ module ElasticSearch
         end
       end
 
+      def delete(index, type, id, options={})
+        response = request(:delete, generate_path(:index => index, :type => type, :id => id))
+        handle_error(response) unless response.status == 200 # ElasticSearch always returns 200 on delete, even if the object doesn't exist
+        nil
+      end
+
       def search(index, type, query, options={})
         if query.is_a?(Hash)
           # patron cannot submit get requests with content, so if query is a hash, post it instead (assume a query hash is using the query dsl)
@@ -80,10 +86,21 @@ module ElasticSearch
         end
       end
 
-      def delete(index, type, id, options={})
-        response = request(:delete, generate_path(:index => index, :type => type, :id => id))
-        handle_error(response) unless response.status == 200 # ElasticSearch always returns 200 on delete, even if the object doesn't exist
-        nil
+      def count(index, type, query, options={})
+        if query.is_a?(Hash)
+          # patron cannot submit get requests with content, so if query is a hash, post it instead (assume a query hash is using the query dsl)
+          query = {:query => query} unless query[:query] # if there is no query element, wrap query in one
+          response = request(:post, generate_path(:index => index, :type => type, :id => "_count", :params => options), encoder.encode(query))
+        else
+          response = request(:get, generate_path(:index => index, :type => type, :id => "_count", :params => options.merge(:q => query)))
+        end
+        if response.status == 200
+          results = encoder.decode(response.body)
+          
+          results # {"count", "_shards"=>{"failed", "total", "successful"}}
+        else
+          handle_error(response)
+        end
       end
 
       private
