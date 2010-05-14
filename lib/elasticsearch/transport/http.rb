@@ -172,7 +172,7 @@ module ElasticSearch
 
       def request(method, path, body=nil, headers={})
         begin
-          puts "request: #{@session.base_url}#{path} body:#{body}"
+          #puts "request: #{@session.base_url}#{path} body:#{body}"
           response = @session.request(method, path, headers, :data => body)
           handle_error(response) if response.status >= 500
           response
