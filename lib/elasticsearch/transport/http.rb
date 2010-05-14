@@ -30,7 +30,11 @@ module ElasticSearch
       #TODO should allow raw response option
       def index(index, type, id, document, options={})
         body = encoder.is_encoded?(document) ? document : encoder.encode(document)
-        response = request(:put, generate_path(:index => index, :type => type, :id => id), body)
+        if id.nil?
+          response = request(:post, generate_path(:index => index, :type => type), body)
+        else
+          response = request(:put, generate_path(:index => index, :type => type, :id => id), body)
+        end
         if response.status == 200
           body = encoder.decode(response.body)
           if body["ok"] == true
