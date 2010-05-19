@@ -27,6 +27,8 @@ module ElasticSearch
         request(:get, "/")
       end
 
+      # index api (modulize)
+
       #TODO should allow raw response option
       def index(index, type, id, document, options={})
         body = encoder.is_encoded?(document) ? document : encoder.encode(document)
@@ -102,6 +104,30 @@ module ElasticSearch
         end
       end
 
+      # admin index api (modulize)
+
+      # admin cluster api (modulize)
+
+      def nodes_info(node_list, options={})
+        if node_list.empty?
+          response = request(:get, generate_path(:index => "_cluster", :type => "nodes"))
+        else
+          response = request(:get, generate_path(:index => "_cluster", :type => "nodes", :id => node_list))
+        end
+        encoder.decode(response.body)
+      end
+
+      # misc helper methods (modulize)
+      def all_nodes
+        http_addresses = nodes_info([])["nodes"].collect { |id, node| node["http_address"] }
+        http_addresses.collect! do |a|
+          if a =~ /inet\[.*\/([\d.:]+)\]/
+            $1
+          end
+        end.compact!
+        http_addresses
+      end
+
       private
 
       # :index - one or many index names
@@ -112,7 +138,7 @@ module ElasticSearch
         path = ""
         path << "/#{Array(options[:index]).collect { |i| escape(i.downcase) }.join(",")}" if options[:index]
         path << "/#{Array(options[:type]).collect { |t| escape(t) }.join(",")}" if options[:type]
-        path << "/#{escape(options[:id])}" if options[:id]
+        path << "/#{Array(options[:id]).collect { |id| escape(id) }.join(",")}" if options[:id]
         path << "?" << query_string(options[:params]) if options[:params] && !options[:params].empty?
         path
       end
