@@ -13,7 +13,12 @@ module ElasticSearch
         # timeout (optional)
         # document (optional)
 
-        execute(:index, options[:index], options[:type], options[:id], document, options)
+        result = execute(:index, options[:index], options[:type], options[:id], document, options)
+        if result["ok"]
+          result["_id"]
+        else
+          false
+        end
       end
 
       def get(id, options={})
@@ -33,7 +38,8 @@ module ElasticSearch
       def delete(id, options={})
         set_default_scope!(options)
         raise "index and type or defaults required" unless options[:index] && options[:type]
-        execute(:delete, options[:index], options[:type], id, options)
+        result = execute(:delete, options[:index], options[:type], id, options)
+        result["ok"]
       end
 
       #df	 The default field to use when no field prefix is defined within the query.

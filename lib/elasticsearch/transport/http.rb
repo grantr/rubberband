@@ -29,7 +29,6 @@ module ElasticSearch
 
       # index api (modulize)
 
-      #TODO should allow raw response option
       def index(index, type, id, document, options={})
         body = encoder.is_encoded?(document) ? document : encoder.encode(document)
         if id.nil?
@@ -37,34 +36,25 @@ module ElasticSearch
         else
           response = request(:put, generate_path(:index => index, :type => type, :id => id), body)
         end
-        if response.status == 200
-          body = encoder.decode(response.body)
-          if body["ok"] == true
-            return body["_id"]
-          end
-        end
-        handle_error(response)
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
       end
 
       def get(index, type, id, options={})
         response = request(:get, generate_path(:index => index, :type => type, :id => id))
         return nil if response.status == 404
 
-        if response.status == 200
-          #TODO this should be shared by whatever is composing the search result response (it is essentially one hit of a search)
-          hit = encoder.decode(response.body)
-          unescape_id!(hit)
-          set_encoding!(hit)
-          hit # { "_id", "_index", "_type", "_source" }
-        else
-          handle_error(response)
-        end
+        handle_error(response) unless response.status == 200
+        hit = encoder.decode(response.body)
+        unescape_id!(hit) #TODO extract these two calls from here and search
+        set_encoding!(hit)
+        hit # { "_id", "_index", "_type", "_source" }
       end
 
       def delete(index, type, id, options={})
         response = request(:delete, generate_path(:index => index, :type => type, :id => id))
         handle_error(response) unless response.status == 200 # ElasticSearch always returns 200 on delete, even if the object doesn't exist
-        nil
+        encoder.decode(response.body)
       end
 
       def search(index, type, query, options={})
@@ -74,18 +64,14 @@ module ElasticSearch
         else
           response = request(:get, generate_path(:index => index, :type => type, :id => "_search", :params => options.merge(:q => query)))
         end
-        if response.status == 200
-          results = encoder.decode(response.body)
-          
-          # unescape ids
-          results["hits"]["hits"].each do |hit|
-            unescape_id!(hit)
-            set_encoding!(hit)
-          end
-          results # {"hits"=>{"hits"=>[{"_id", "_type", "_source", "_index"}], "total"}, "_shards"=>{"failed", "total", "successful"}}
-        else
-          handle_error(response)
+        handle_error(response) unless response.status == 200
+        results = encoder.decode(response.body)
+        # unescape ids
+        results["hits"]["hits"].each do |hit|
+          unescape_id!(hit)
+          set_encoding!(hit)
         end
+        results # {"hits"=>{"hits"=>[{"_id", "_type", "_source", "_index"}], "total"}, "_shards"=>{"failed", "total", "successful"}}
       end
 
       def count(index, type, query, options={})
@@ -95,13 +81,8 @@ module ElasticSearch
         else
           response = request(:get, generate_path(:index => index, :type => type, :id => "_count", :params => options.merge(:q => query)))
         end
-        if response.status == 200
-          results = encoder.decode(response.body)
-          
-          results # {"count", "_shards"=>{"failed", "total", "successful"}}
-        else
-          handle_error(response)
-        end
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body) # {"count", "_shards"=>{"failed", "total", "successful"}}
       end
 
       # admin index api (modulize)
