@@ -19,12 +19,13 @@ module ElasticSearch
     end
 
     class Hits
-      attr_reader :hits, :total_entries, :_shards, :response
+      attr_reader :hits, :total_entries, :_shards, :response, :facets
 
       def initialize(response, ids_only=false)
         @response = response
         @total_entries = response["hits"]["total"]
         @_shards = response["_shards"]
+        @facets = response["facets"]
         populate(ids_only)
       end
 
