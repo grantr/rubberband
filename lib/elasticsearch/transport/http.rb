@@ -24,7 +24,7 @@ module ElasticSearch
         @session.base_url = @server
         @session.timeout = @options[:timeout]
         @session.headers['User-Agent'] = 'ElasticSearch.rb v0.1'
-        request(:get, "/")
+        request(:get, "/") # try a get to see if the server responds
       end
 
       # index api (modulize)
