@@ -58,9 +58,15 @@ module ElasticSearch
         #TODO this doesn't work for facets, because they have a valid query key as element. need a list of valid toplevel keys in the search dsl
         #query = {:query => query} if query.is_a?(Hash) && !query[:query] # if there is no query element, wrap query in one
 
-        search_options = slice_hash(options, :df, :analyzer, :default_operator, :explain, :fields, :field, :sort, :from, :size, :search_type)
+        search_options = slice_hash(options, :df, :analyzer, :default_operator, :explain, :fields, :field, :sort, :from, :size, :search_type, :limit, :per_page, :page, :offset)
+
+        search_options[:size] ||= search_options[:per_page] if search_options[:per_page]
+        search_options[:size] ||= search_options[:limit] if search_options[:limit]
+        search_options[:from] ||= search_options[:size] * (search_options[:page]-1) if search_options[:page] && search_options[:page] > 1
+        search_options[:from] ||= search_options[:offset] if search_options[:offset]
+
         response = execute(:search, options[:index], options[:type], query, search_options)
-        Hits.new(response, !!options[:ids_only]).freeze #ids_only returns array of ids instead of hits #TODO ids_only should only select _id field
+        Hits.new(response, slice_hash(search_options, :per_page, :page, :ids_only)).freeze #ids_only returns array of ids instead of hits #TODO ids_only should only select _id field
       end
 
       #df	 The default field to use when no field prefix is defined within the query.
