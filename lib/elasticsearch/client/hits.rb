@@ -10,6 +10,11 @@ module ElasticSearch
         hit.merge!(hit.delete("_source"))
         hit["id"] ||= hit["_id"]
         super(hit)
+        @table.freeze
+      end
+
+      def attributes
+        @table
       end
     end
 
