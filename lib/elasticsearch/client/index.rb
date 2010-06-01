@@ -65,8 +65,10 @@ module ElasticSearch
         search_options[:from] ||= search_options[:size] * (search_options[:page]-1) if search_options[:page] && search_options[:page] > 1
         search_options[:from] ||= search_options[:offset] if search_options[:offset]
 
+        search_options[:fields] = "_id" if options[:ids_only]
+
         response = execute(:search, options[:index], options[:type], query, search_options)
-        Hits.new(response, slice_hash(options, :per_page, :page, :ids_only)).freeze #ids_only returns array of ids instead of hits #TODO ids_only should only select _id field
+        Hits.new(response, slice_hash(options, :per_page, :page, :ids_only)).freeze #ids_only returns array of ids instead of hits
       end
 
       #df	 The default field to use when no field prefix is defined within the query.
