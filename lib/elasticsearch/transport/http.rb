@@ -60,9 +60,9 @@ module ElasticSearch
       def search(index, type, query, options={})
         if query.is_a?(Hash)
           # patron cannot submit get requests with content, so if query is a hash, post it instead (assume a query hash is using the query dsl)
-          response = request(:post, generate_path(:index => index, :type => type, :id => "_search", :params => options), encoder.encode(query))
+          response = request(:post, generate_path(:index => index, :type => type, :op => "_search", :params => options), encoder.encode(query))
         else
-          response = request(:get, generate_path(:index => index, :type => type, :id => "_search", :params => options.merge(:q => query)))
+          response = request(:get, generate_path(:index => index, :type => type, :op => "_search", :params => options.merge(:q => query)))
         end
         handle_error(response) unless response.status == 200
         results = encoder.decode(response.body)
@@ -77,9 +77,9 @@ module ElasticSearch
       def count(index, type, query, options={})
         if query.is_a?(Hash)
           # patron cannot submit get requests with content, so if query is a hash, post it instead (assume a query hash is using the query dsl)
-          response = request(:post, generate_path(:index => index, :type => type, :id => "_count", :params => options), encoder.encode(query))
+          response = request(:post, generate_path(:index => index, :type => type, :op => "_count", :params => options), encoder.encode(query))
         else
-          response = request(:get, generate_path(:index => index, :type => type, :id => "_count", :params => options.merge(:q => query)))
+          response = request(:get, generate_path(:index => index, :type => type, :op => "_count", :params => options.merge(:q => query)))
         end
         handle_error(response) unless response.status == 200
         encoder.decode(response.body) # {"count", "_shards"=>{"failed", "total", "successful"}}
