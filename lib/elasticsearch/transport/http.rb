@@ -27,7 +27,7 @@ module ElasticSearch
         request(:get, "/") # try a get to see if the server responds
       end
 
-      # index api (modulize)
+      # index api (TODO modulize)
 
       def index(index, type, id, document, options={})
         body = encoder.is_encoded?(document) ? document : encoder.encode(document)
@@ -87,18 +87,45 @@ module ElasticSearch
 
       # admin index api (modulize)
 
-      # admin cluster api (modulize)
-
-      def nodes_info(node_list, options={})
-        if node_list.empty?
-          response = request(:get, generate_path(:index => "_cluster", :type => "nodes"))
-        else
-          response = request(:get, generate_path(:index => "_cluster", :type => "nodes", :id => node_list))
-        end
+      # admin cluster api (TODO modulize)
+      
+      def cluster_health(index_list, options={})
+        response = request(:get, generate_path(:index => "_cluster", :type => "health", :id => index_list, :params => options))
+        handle_error(response) unless response.status == 200
         encoder.decode(response.body)
       end
 
-      # misc helper methods (modulize)
+      def cluster_state(options={})
+        response = request(:get, generate_path(:index => "_cluster", :op => "state"))
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+
+      def nodes_info(node_list, options={})
+        response = request(:get, generate_path(:index => "_cluster", :type => "nodes", :id => node_list))
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+
+      def nodes_stats(node_list, options={})
+        response = request(:get, generate_path(:index => "_cluster", :type => "nodes", :id => node_list, :op => "stats"))
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+
+      def shutdown_nodes(node_list, options={})
+        response = request(:post, generate_path(:index => "_cluster", :type => "nodes", :id => node_list, :op => "_shutdown", :params => options), "")
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+
+      def restart_nodes(node_list, options={})
+        response = request(:post, generate_path(:index => "_cluster", :type => "nodes", :id => node_list, :op =>  "_restart", :params => options), "")
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+
+      # misc helper methods (TODO modulize)
       def all_nodes
         http_addresses = nodes_info([])["nodes"].collect { |id, node| node["http_address"] }
         http_addresses.collect! do |a|
@@ -117,9 +144,10 @@ module ElasticSearch
       # :params - hash of query params
       def generate_path(options)
         path = ""
-        path << "/#{Array(options[:index]).collect { |i| escape(i.downcase) }.join(",")}" if options[:index]
-        path << "/#{Array(options[:type]).collect { |t| escape(t) }.join(",")}" if options[:type]
-        path << "/#{Array(options[:id]).collect { |id| escape(id) }.join(",")}" if options[:id]
+        path << "/#{Array(options[:index]).collect { |i| escape(i.downcase) }.join(",")}" if options[:index] && !options[:index].empty?
+        path << "/#{Array(options[:type]).collect { |t| escape(t) }.join(",")}" if options[:type] && !options[:type].empty?
+        path << "/#{Array(options[:id]).collect { |id| escape(id) }.join(",")}" if options[:id] && !options[:id].empty?
+        path << "/#{options[:op]}" if options[:op]
         path << "?" << query_string(options[:params]) if options[:params] && !options[:params].empty?
         path
       end
