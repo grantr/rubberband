@@ -85,7 +85,49 @@ module ElasticSearch
         encoder.decode(response.body) # {"count", "_shards"=>{"failed", "total", "successful"}}
       end
 
-      # admin index api (modulize)
+      # admin index api (TODO modulize)
+      #
+      def index_status(index_list, options={})
+        response = request(:get, generate_path(:index => index_list, :op => "_status"))
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+
+      def create_index(index, create_options={}, options={})
+        response = request(:put, generate_path(:index => index), encoder.encode(create_options))
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+
+      def delete_index(index, options={})
+        response = request(:delete, generate_path(:index => index))
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+
+      def flush(index_list, options={})
+        response = request(:post, generate_path(:index => index_list, :op => "_flush", :params => options), "")
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+      
+      def refresh(index_list, options={})
+        response = request(:post, generate_path(:index => index_list, :op => "_refresh"), "")
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+      
+      def snapshot(index_list, options={})
+        response = request(:post, generate_path(:index => index_list, :type => "_gateway", :op => "snapshot"), "")
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+      
+      def optimize(index_list, options={})
+        response = request(:post, generate_path(:index => index_list, :op => "_optimize", :params => options), "")
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
 
       # admin cluster api (TODO modulize)
       
