@@ -23,6 +23,31 @@ module ElasticSearch
           execute(:delete_index, index, options)
         end
 
+        # :add => { "index" => "alias" }
+        # :add => [{"index" => "alias"}, {"index2" => "alias2"}]
+        # :add => { "index" => "alias", "index2" => "alias2" }
+        # :remove => { "index" => "alias" }
+        # :remove => [{"index" => "alias", {"index2" => "alias2"}]
+        # :remove => { "index" => "alias", "index2" => "alias2" }
+        # :actions => [{:add => {:index => "index", :alias => "alias"}}]
+        def alias_index(operations, options={})
+          if operations[:actions]
+            alias_ops = operations
+          else
+            alias_ops = { :actions => [] }
+            [:add, :remove].each do |op|
+              next unless operations.has_key?(op)
+              op_actions = operations[op].is_a?(Array) ? operations[op] : [operations[op]]
+              op_actions.each do |action_hash|
+                action_hash.each do |index, index_alias|
+                  alias_ops[:actions] << { op => { :index => index, :alias => index_alias }}
+                end
+              end
+            end
+          end
+          execute(:alias_index, alias_ops, options)
+        end
+
         # list of indices, or :all
         # options: refresh
         # default: default_index if defined, otherwise :all

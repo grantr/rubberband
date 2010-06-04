@@ -105,6 +105,12 @@ module ElasticSearch
         encoder.decode(response.body)
       end
 
+      def alias_index(operations, options={})
+        response = request(:post, generate_path(:op => "_aliases"), encoder.encode(operations))
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+
       def flush(index_list, options={})
         response = request(:post, generate_path(:index => index_list, :op => "_flush", :params => options), "")
         handle_error(response) unless response.status == 200
