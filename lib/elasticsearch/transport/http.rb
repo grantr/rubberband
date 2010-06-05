@@ -88,95 +88,65 @@ module ElasticSearch
       # admin index api (TODO modulize)
       #
       def index_status(index_list, options={})
-        response = request(:get, generate_path(:index => index_list, :op => "_status"))
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:get, generate_path(:index => index_list, :op => "_status"))
       end
 
       def create_index(index, create_options={}, options={})
-        response = request(:put, generate_path(:index => index), encoder.encode(create_options))
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:put, generate_path(:index => index), encoder.encode(create_options))
       end
 
       def delete_index(index, options={})
-        response = request(:delete, generate_path(:index => index))
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:delete, generate_path(:index => index))
       end
 
       def alias_index(operations, options={})
-        response = request(:post, generate_path(:op => "_aliases"), encoder.encode(operations))
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:post, generate_path(:op => "_aliases"), encoder.encode(operations))
       end
 
       def update_mapping(index, type, mapping, options)
-        response = request(:put, generate_path(:index => index, :type => type, :op => "_mapping", :params => options), encoder.encode(mapping))
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:put, generate_path(:index => index, :type => type, :op => "_mapping", :params => options), encoder.encode(mapping))
       end
 
       def flush(index_list, options={})
-        response = request(:post, generate_path(:index => index_list, :op => "_flush", :params => options), "")
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:post, generate_path(:index => index_list, :op => "_flush", :params => options), "")
       end
       
       def refresh(index_list, options={})
-        response = request(:post, generate_path(:index => index_list, :op => "_refresh"), "")
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:post, generate_path(:index => index_list, :op => "_refresh"), "")
       end
       
       def snapshot(index_list, options={})
-        response = request(:post, generate_path(:index => index_list, :type => "_gateway", :op => "snapshot"), "")
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:post, generate_path(:index => index_list, :type => "_gateway", :op => "snapshot"), "")
       end
       
       def optimize(index_list, options={})
-        response = request(:post, generate_path(:index => index_list, :op => "_optimize", :params => options), "")
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:post, generate_path(:index => index_list, :op => "_optimize", :params => options), "")
       end
 
       # admin cluster api (TODO modulize)
       
       def cluster_health(index_list, options={})
-        response = request(:get, generate_path(:index => "_cluster", :type => "health", :id => index_list, :params => options))
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:get, generate_path(:index => "_cluster", :type => "health", :id => index_list, :params => options))
       end
 
       def cluster_state(options={})
-        response = request(:get, generate_path(:index => "_cluster", :op => "state"))
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:get, generate_path(:index => "_cluster", :op => "state"))
       end
 
       def nodes_info(node_list, options={})
-        response = request(:get, generate_path(:index => "_cluster", :type => "nodes", :id => node_list))
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:get, generate_path(:index => "_cluster", :type => "nodes", :id => node_list))
       end
 
       def nodes_stats(node_list, options={})
-        response = request(:get, generate_path(:index => "_cluster", :type => "nodes", :id => node_list, :op => "stats"))
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:get, generate_path(:index => "_cluster", :type => "nodes", :id => node_list, :op => "stats"))
       end
 
       def shutdown_nodes(node_list, options={})
-        response = request(:post, generate_path(:index => "_cluster", :type => "nodes", :id => node_list, :op => "_shutdown", :params => options), "")
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:post, generate_path(:index => "_cluster", :type => "nodes", :id => node_list, :op => "_shutdown", :params => options), "")
       end
 
       def restart_nodes(node_list, options={})
-        response = request(:post, generate_path(:index => "_cluster", :type => "nodes", :id => node_list, :op =>  "_restart", :params => options), "")
-        handle_error(response) unless response.status == 200
-        encoder.decode(response.body)
+        standard_request(:post, generate_path(:index => "_cluster", :type => "nodes", :id => node_list, :op =>  "_restart", :params => options), "")
       end
 
       # misc helper methods (TODO modulize)
@@ -191,6 +161,12 @@ module ElasticSearch
       end
 
       private
+
+      def standard_request(*args)
+        response = request(*args)
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
 
       # :index - one or many index names
       # :type - one or many types
