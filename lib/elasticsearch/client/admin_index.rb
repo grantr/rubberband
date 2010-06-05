@@ -48,6 +48,22 @@ module ElasticSearch
           execute(:alias_index, alias_ops, options)
         end
 
+        # options: ignore_conflicts
+        def update_mapping(mapping, options={})
+          set_default_scope!(options)
+          raise "index and type or defaults required" unless options[:index] && options[:type]
+
+          options = options.dup
+          indices = Array(options.delete(:index))
+          type = options.delete(:type)
+          unless mapping[type]
+            mapping = { type => mapping }
+          end
+
+          indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+          execute(:update_mapping, indices, type, mapping, options)
+        end
+
         # list of indices, or :all
         # options: refresh
         # default: default_index if defined, otherwise :all

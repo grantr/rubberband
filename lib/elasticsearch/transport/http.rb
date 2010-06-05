@@ -111,6 +111,12 @@ module ElasticSearch
         encoder.decode(response.body)
       end
 
+      def update_mapping(index, type, mapping, options)
+        response = request(:put, generate_path(:index => index, :type => type, :op => "_mapping", :params => options), encoder.encode(mapping))
+        handle_error(response) unless response.status == 200
+        encoder.decode(response.body)
+      end
+
       def flush(index_list, options={})
         response = request(:post, generate_path(:index => index_list, :op => "_flush", :params => options), "")
         handle_error(response) unless response.status == 200
