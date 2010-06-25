@@ -62,7 +62,7 @@ module ElasticSearch
 
         search_options[:size] ||= search_options[:per_page] if search_options[:per_page]
         search_options[:size] ||= search_options[:limit] if search_options[:limit]
-        search_options[:from] ||= search_options[:size] * (search_options[:page]-1) if search_options[:page] && search_options[:page] > 1
+        search_options[:from] ||= search_options[:size] * (search_options[:page]-1) if search_options[:page] && search_options[:page].to_i > 1
         search_options[:from] ||= search_options[:offset] if search_options[:offset]
 
         search_options[:fields] = "_id" if options[:ids_only]
