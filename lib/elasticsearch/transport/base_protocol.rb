@@ -159,7 +159,7 @@ module ElasticSearch
       end
 
       def set_encoding!(hit)
-        encode_utf8(hit["_source"])
+        encode_utf8(hit["_source"]) if hit["_source"].is_a?(String)
         nil
       end
 
