@@ -1,9 +1,9 @@
 # mostly ripped from thrift_client
 
 module ElasticSearch
-  module RetryingClient
+  class NoServersAvailable < StandardError; end
 
-    class NoServersAvailable < StandardError; end
+  module RetryingClient
 
     RETRYING_DEFAULTS = {
       :randomize_server_list => true,
@@ -27,7 +27,7 @@ module ElasticSearch
     def connect!
       @current_server = next_server
       super
-    rescue ElasticSearch::Transport::RetryableError
+    rescue ElasticSearch::RetryableError
       retry
     end
 
@@ -66,7 +66,7 @@ module ElasticSearch
       @request_count += 1
       begin
         super
-      rescue ElasticSearch::Transport::RetryableError
+      rescue ElasticSearch::RetryableError
         disconnect!
         retry
       end

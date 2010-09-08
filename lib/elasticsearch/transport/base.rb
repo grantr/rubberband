@@ -1,7 +1,8 @@
 module ElasticSearch
+  class RetryableError < StandardError; end
+  class FatalError < StandardError; end
+
   module Transport
-    class RetryableError < StandardError; end
-    class FatalError < StandardError; end
 
     DEFAULTS = {
       :encoder => ElasticSearch::Encoding::JSON

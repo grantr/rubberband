@@ -2,13 +2,13 @@ require 'patron'
 require 'cgi'
 
 module ElasticSearch
+  class ConnectionFailed < RetryableError; end
+  class HostResolutionError < RetryableError; end
+  class TimeoutError < RetryableError; end
+  class RequestError < FatalError; end
+
   module Transport
     class HTTP < Base
-
-      class ConnectionFailed < RetryableError; end
-      class HostResolutionError < RetryableError; end
-      class TimeoutError < RetryableError; end
-      class RequestError < FatalError; end
 
       DEFAULTS = {
         :timeout => 5
