@@ -247,7 +247,7 @@ module ElasticSearch
             raise ConnectionFailed
           when Patron::HostResolutionError
             raise HostResolutionError
-          when TimeoutError
+          when Patron::TimeoutError
             raise TimeoutError
           else
             raise e
