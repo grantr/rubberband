@@ -3,7 +3,7 @@ require 'ostruct'
 module ElasticSearch
   module Api
     class Hit < OpenStruct
-      undef_method :id
+      undef_method :id if method_defined?(:id)
 
       def initialize(hit)
         hit = hit.dup
