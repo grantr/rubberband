@@ -7,7 +7,7 @@ module ElasticSearch
 
       def initialize(hit)
         hit = hit.dup
-        hit.merge!(hit["_source"])
+        hit.merge!(hit["_source"]) if hit["_source"]
         hit["id"] ||= hit["_id"]
         super(hit)
         @table.freeze
