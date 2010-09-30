@@ -1,2 +1,7 @@
 require 'encoding/base'
-require 'encoding/json'
+
+module ElasticSearch
+  module Encoding
+    autoload :JSON, 'encoding/json'
+  end
+end

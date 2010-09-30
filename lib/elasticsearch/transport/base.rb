@@ -28,6 +28,10 @@ module ElasticSearch
       def encoder
         @encoder ||= @options[:encoder].new
       end
+
+      def request(method, operation, params={}, body=nil, headers={})
+        raise NotImplementedError
+      end
     end
   end
 end

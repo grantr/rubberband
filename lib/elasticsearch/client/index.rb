@@ -60,8 +60,7 @@ module ElasticSearch
 
         search_options = slice_hash(options, :df, :analyzer, :default_operator, :explain, :fields, :field, :sort, :from, :size, :search_type, :limit, :per_page, :page, :offset)
 
-        search_options[:size] ||= search_options[:per_page] if search_options[:per_page]
-        search_options[:size] ||= search_options[:limit] if search_options[:limit]
+        search_options[:size] ||= (search_options[:per_page] || search_options[:limit] || 10)
         search_options[:from] ||= search_options[:size] * (search_options[:page].to_i-1) if search_options[:page] && search_options[:page].to_i > 1
         search_options[:from] ||= search_options[:offset] if search_options[:offset]
 

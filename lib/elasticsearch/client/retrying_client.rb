@@ -42,6 +42,7 @@ module ElasticSearch
       @request_count = 0
     end
 
+    #TODO this can spin indefinitely if timeout > retry_period
     def next_server
       if @retry_period
         rebuild_live_server_list! if Time.now > @last_rebuild + @retry_period

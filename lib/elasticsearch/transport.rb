@@ -1,3 +1,14 @@
 require "transport/base_protocol"
 require "transport/base"
-require "transport/http"
+
+module ElasticSearch
+  class ConnectionFailed < RetryableError; end
+  class HostResolutionError < RetryableError; end
+  class TimeoutError < RetryableError; end
+  class RequestError < FatalError; end
+
+  module Transport
+    autoload :HTTP, 'transport/http'
+    autoload :Thrift, 'transport/thrift'
+  end
+end
