@@ -44,7 +44,7 @@ module ElasticSearch
 
     class Hits
       include Pagination
-      attr_reader :hits, :total_entries, :_shards, :response, :facets
+      attr_reader :hits, :total_entries, :_shards, :response, :facets, :scroll_id
 
       def initialize(response, options={})
         @response = response
@@ -52,6 +52,7 @@ module ElasticSearch
         @total_entries = response["hits"]["total"]
         @_shards = response["_shards"]
         @facets = response["facets"]
+        @scroll_id = response["_scrollId"]
         populate(@options[:ids_only])
       end
 
