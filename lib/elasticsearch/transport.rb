@@ -9,5 +9,6 @@ module ElasticSearch
 
   module Transport
     autoload :HTTP, 'transport/http'
+    autoload :Thrift, 'transport/thrift'
   end
 end
