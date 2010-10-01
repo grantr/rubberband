@@ -52,13 +52,15 @@ module ElasticSearch
       #from	 The starting from index of the hits to return. Defaults to 0.
       #size	 The number of hits to return. Defaults to 10.
       #search_type	 The type of the search operation to perform. Can be dfs_query_then_fetch, dfs_query_and_fetch, query_then_fetch, query_and_fetch. Defaults to query_then_fetch.
+      #scroll Get a scroll id to continue paging through the search results. Value is the time to keep a scroll request around, e.g. 5m
+      #ids_only Return ids instead of hits
       def search(query, options={})
         set_default_scope!(options)
 
         #TODO this doesn't work for facets, because they have a valid query key as element. need a list of valid toplevel keys in the search dsl
         #query = {:query => query} if query.is_a?(Hash) && !query[:query] # if there is no query element, wrap query in one
 
-        search_options = slice_hash(options, :df, :analyzer, :default_operator, :explain, :fields, :field, :sort, :from, :size, :search_type, :limit, :per_page, :page, :offset)
+        search_options = slice_hash(options, :df, :analyzer, :default_operator, :explain, :fields, :field, :sort, :from, :size, :search_type, :limit, :per_page, :page, :offset, :scroll)
 
         search_options[:size] ||= (search_options[:per_page] || search_options[:limit] || 10)
         search_options[:from] ||= search_options[:size] * (search_options[:page].to_i-1) if search_options[:page] && search_options[:page].to_i > 1
@@ -70,6 +72,12 @@ module ElasticSearch
         Hits.new(response, slice_hash(options, :per_page, :page, :ids_only)).freeze #ids_only returns array of ids instead of hits
       end
 
+      #ids_only Return ids instead of hits
+      def scroll(scroll_id, options={})
+        response = execute(:scroll, scroll_id)
+        Hits.new(response, slice_hash(options, :ids_only)).freeze
+      end 
+
       #df	 The default field to use when no field prefix is defined within the query.
       #analyzer	 The analyzer name to be used when analyzing the query string.
       #default_operator	 The default operator to be used, can be AND or OR. Defaults to OR.
@@ -80,7 +88,6 @@ module ElasticSearch
         response = execute(:count, options[:index], options[:type], query, count_options)
         response["count"].to_i #TODO check if count is nil
       end
-
 
       private
 

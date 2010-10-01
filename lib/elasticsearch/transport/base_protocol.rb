@@ -43,7 +43,19 @@ module ElasticSearch
           unescape_id!(hit)
           set_encoding!(hit)
         end
-        results # {"hits"=>{"hits"=>[{"_id", "_type", "_source", "_index"}], "total"}, "_shards"=>{"failed", "total", "successful"}}
+        results # {"hits"=>{"hits"=>[{"_id", "_type", "_source", "_index", "_score"}], "total"}, "_shards"=>{"failed", "total", "successful"}}
+      end
+
+      def scroll(scroll_id)
+        response = request(:get, {:op => "_search/scroll"}, {:scroll_id => scroll_id })
+        handle_error(response) unless response.status == 200
+        results = encoder.decode(response.body)
+        # unescape ids
+        results["hits"]["hits"].each do |hit|
+          unescape_id!(hit)
+          set_encoding!(hit)
+        end
+        results # {"hits"=>{"hits"=>[{"_id", "_type", "_source", "_index", "_score"}], "total"}, "_shards"=>{"failed", "total", "successful"}, "_scrollId"}
       end
 
       def count(index, type, query, options={})
@@ -159,7 +171,7 @@ module ElasticSearch
       end
 
       def set_encoding!(hit)
-        hit_source = hit["_source"]
+        encode_utf8(hit["_source"]) if hit["_source"].is_a?(String)
         nil
       end
 
