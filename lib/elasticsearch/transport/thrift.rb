@@ -45,9 +45,9 @@ module ElasticSearch
         [host, port]
       end
 
-      def stringify_keys!(hash)
+      def stringify!(hash)
         hash.keys.each do |k|
-          hash[k.to_s] = hash.delete(k)
+          hash[k.to_s] = hash.delete(k).to_s
         end
         hash
       end
@@ -69,9 +69,9 @@ module ElasticSearch
           end
 
           request.uri = uri
-          request.params = stringify_keys!(params) #TODO this will change to parameters= in versions > 0.11.0
+          request.params = stringify!(params) #TODO this will change to parameters= in versions > 0.11.0
           request.body = body
-          request.headers = stringify_keys!(headers)
+          request.headers = stringify!(headers)
           response = @client.execute(request)
           handle_error(response) if response.status >= 500
           response
