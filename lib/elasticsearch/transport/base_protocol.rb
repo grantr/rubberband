@@ -159,7 +159,7 @@ module ElasticSearch
       end
 
       def set_encoding!(hit)
-        encode_utf8(hit["_source"])
+        hit_source = hit["_source"]
         nil
       end
 
@@ -180,7 +180,7 @@ module ElasticSearch
         # encodes the string as utf-8 in Ruby 1.9
         def encode_utf8(string)
           # ElasticSearch only ever returns json in UTF-8 (per the JSON spec) so we can use force_encoding here (#TODO what about ids? can we assume those are always ascii?)
-          string.force_encoding(Encoding::UTF_8)
+          string.force_encoding(::Encoding::UTF_8)
         end
       else
         # returns the unaltered string in Ruby 1.8
