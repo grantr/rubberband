@@ -10,5 +10,6 @@ module ElasticSearch
   module Transport
     autoload :HTTP, 'transport/http'
     autoload :Thrift, 'transport/thrift'
+    autoload :Memcached, 'transport/memcached'
   end
 end
