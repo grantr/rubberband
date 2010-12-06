@@ -42,6 +42,16 @@ module ElasticSearch
         @transport.close rescue nil
       end
 
+      def all_nodes
+        thrift_addresses = nodes_info([])["nodes"].collect { |id, node| node["thrift_address"] }
+        thrift_addresses.collect! do |a|
+          if a =~ /.*\/([\d.:]+)/
+            $1
+          end
+        end.compact!
+        thrift_addresses
+      end
+
       private
 
       def parse_server(server)
