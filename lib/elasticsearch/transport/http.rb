@@ -38,7 +38,7 @@ module ElasticSearch
           uri = generate_uri(operation)
           query = generate_query_string(params)
           path = [uri, query].join("?")
-          #puts "request: #{@server} #{path} #{body}"
+          #puts "request: #{method} #{@server} #{path} #{body}"
           response = @session.request(method, path, headers, :data => body)
           handle_error(response) if response.status >= 500
           response
