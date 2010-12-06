@@ -10,9 +10,11 @@ end
 require 'rake'
 
 require 'jeweler'
+require './lib/elasticsearch/version'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "rubberband"
+  gem.version = ElasticSearch::Version::STRING
   gem.homepage = "http://github.com/grantr/rubberband"
   gem.license = "Apache v2.0"
   gem.summary = %Q{An ElasticSearch client.}
@@ -40,8 +42,7 @@ task :default => :test
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
+  version = ElasticSearch::Version::STRING
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title = "rubberband #{version}"
   rdoc.rdoc_files.include('README*')
