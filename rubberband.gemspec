@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rubberband}
-  s.version = "0.0.4"
+  s.version = "0.0.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["grantr"]
   s.date = %q{2010-12-06}
-  s.description = %q{An ElasticSearch Client with ThriftClient-like failover handling.}
+  s.description = %q{An ElasticSearch client with ThriftClient-like failover handling.}
   s.email = %q{grantr@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -18,11 +18,12 @@ Gem::Specification.new do |s|
     "TODO"
   ]
   s.files = [
+    "Gemfile",
+    "Gemfile.lock",
     "LICENSE",
     "README.rdoc",
     "Rakefile",
     "TODO",
-    "VERSION",
     "lib/elasticsearch.rb",
     "lib/elasticsearch/client.rb",
     "lib/elasticsearch/client/abstract_client.rb",
@@ -44,6 +45,7 @@ Gem::Specification.new do |s|
     "lib/elasticsearch/transport/thrift/elasticsearch_constants.rb",
     "lib/elasticsearch/transport/thrift/elasticsearch_types.rb",
     "lib/elasticsearch/transport/thrift/rest.rb",
+    "lib/elasticsearch/version.rb",
     "lib/rubberband.rb",
     "rubberband.gemspec",
     "test/elasticsearch_test.rb",
@@ -52,6 +54,7 @@ Gem::Specification.new do |s|
     "vendor/elasticsearch/elasticsearch.thrift"
   ]
   s.homepage = %q{http://github.com/grantr/rubberband}
+  s.licenses = ["Apache v2.0"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{An ElasticSearch client.}
@@ -69,15 +72,24 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<patron>, [">= 0"])
       s.add_runtime_dependency(%q<yajl-ruby>, [">= 0"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
+      s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_development_dependency(%q<jeweler>, ["~> 1.5.1"])
+      s.add_development_dependency(%q<rcov>, [">= 0"])
     else
       s.add_dependency(%q<patron>, [">= 0"])
       s.add_dependency(%q<yajl-ruby>, [">= 0"])
       s.add_dependency(%q<shoulda>, [">= 0"])
+      s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_dependency(%q<jeweler>, ["~> 1.5.1"])
+      s.add_dependency(%q<rcov>, [">= 0"])
     end
   else
     s.add_dependency(%q<patron>, [">= 0"])
     s.add_dependency(%q<yajl-ruby>, [">= 0"])
     s.add_dependency(%q<shoulda>, [">= 0"])
+    s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+    s.add_dependency(%q<jeweler>, ["~> 1.5.1"])
+    s.add_dependency(%q<rcov>, [">= 0"])
   end
 end
 
