@@ -1,29 +1,9 @@
-index api:
-  index*
-  get*
-  delete*
-  delete_by_query
-  count*
-  search*
-  terms
-  more_like_this
-admin index api:
-  status*
-  create*
-  delete*
-  alias*
-  mapping*
-  flush*
-  refresh*
-  snapshot*
-  optimize*
-admin cluster api:
-  health*
-  state*
-  nodes info*
-  nodes stats*
-  nodes shutdown*
-  nodes restart*
-
-handle partial failure cases where some shards are unsuccessful (maybe raise a PartialResult exception, allow override option to return results anyway. results should have a flag that signifies incompleteness)
+delete_by_query
+terms
+more_like_this
+bulk ops
+test scroll better, maybe add a scroller object
+handle partial failure cases where some shards are unsuccessful (optionally raise a PartialResult exception, allow override option to return results anyway. results should have a flag that signifies incompleteness)
 tests/specs/features
+memcached transport
+smile encoding
