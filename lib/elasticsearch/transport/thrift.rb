@@ -69,7 +69,7 @@ module ElasticSearch
           end
 
           request.uri = uri
-          request.params = stringify!(params) #TODO this will change to parameters= in versions > 0.11.0
+          request.parameters = stringify!(params)
           request.body = body
           request.headers = stringify!(headers)
           response = @client.execute(request)
