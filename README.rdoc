@@ -9,8 +9,9 @@ Copyright 2010 Grant Rodgers. See included LICENSE file.
 
 == Features
 
-* Automatic failover and retry
-* Multiple transports and encodings (TODO)
+* Automatic failover, retry, and peer discovery
+* Multiple transports (HTTP, Thrift, Memcached TODO)
+* Multiple encodings (JSON (Yajl), Smile TODO)
 
 == Usage
 
@@ -18,7 +19,7 @@ Instantiate a client:
 
   client = ElasticSearch.new('127.0.0.1:9200', :index => "twitter", :type => "tweet")
 
-API is subject to change, but here is a trivial example:
+API:
 
   client.index({:body => "elasticsearch is cool"}, :id => 1)
   client.get("1")
@@ -26,8 +27,7 @@ API is subject to change, but here is a trivial example:
 
 == TODO
 
-lots! :)
-
+See TODO file.
 
 == Contributing
 
