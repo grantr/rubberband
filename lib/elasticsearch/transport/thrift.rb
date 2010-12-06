@@ -1,4 +1,9 @@
-require 'thrift'
+begin
+  require 'thrift'
+rescue LoadError => error
+  raise "Please install the thrift gem (>= 0.5.0) to use the Thrift transport."
+end
+
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "thrift"))
 require 'rest'
 
