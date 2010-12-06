@@ -104,7 +104,7 @@ module ElasticSearch
       end
       
       def optimize(index_list, options={})
-        standard_request(:post, {:index => index_list, :op => "_optimize"}, options, {}, "")
+        standard_request(:post, {:index => index_list, :op => "_optimize"}, options, {})
       end
     end
 
