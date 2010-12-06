@@ -17,13 +17,13 @@ enum Method {
 struct RestRequest {
     1: required Method method,
     2: required string uri
-    3: optional map<string, string> params
+    3: optional map<string, string> parameters
     4: optional map<string, string> headers
     5: optional binary body
 }
 
 enum Status {
-    CONTINUE = 100,
+    CONT = 100,
     SWITCHING_PROTOCOLS = 101,
     OK = 200,
     CREATED = 201,
