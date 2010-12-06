@@ -76,7 +76,7 @@ module ElasticSearch
           when :get
             request.method = ElasticSearch::Thrift::Method::GET
           when :put
-            request.method = ElasticSearch::Thrift::Method::GET
+            request.method = ElasticSearch::Thrift::Method::PUT
           when :post
             request.method = ElasticSearch::Thrift::Method::POST
           when :delete
