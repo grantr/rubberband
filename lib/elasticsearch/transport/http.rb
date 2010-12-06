@@ -21,6 +21,16 @@ module ElasticSearch
         @session.headers['User-Agent'] = 'ElasticSearch.rb v0.1'
       end
 
+      def all_nodes
+        http_addresses = nodes_info([])["nodes"].collect { |id, node| node["http_address"] }
+        http_addresses.collect! do |a|
+          if a =~ /inet\[.*\/([\d.:]+)\]/
+            $1
+          end
+        end.compact!
+        http_addresses
+      end
+
       private
 
       def request(method, operation, params={}, body=nil, headers={})
