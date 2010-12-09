@@ -13,11 +13,16 @@ module ElasticSearch
         # timeout (optional)
         # document (optional)
 
-        result = execute(:index, options[:index], options[:type], options[:id], document, options)
-        if result["ok"]
-          result["_id"]
+        if @batch
+          @batch << { :index => { :_index => options[:index], :_type => options[:type], :_id => options[:id] }}
+          @batch << document
         else
-          false
+          result = execute(:index, options[:index], options[:type], options[:id], document, options)
+          if result["ok"]
+            result["_id"]
+          else
+            false
+          end
         end
       end
 
@@ -38,8 +43,13 @@ module ElasticSearch
       def delete(id, options={})
         set_default_scope!(options)
         raise "index and type or defaults required" unless options[:index] && options[:type]
-        result = execute(:delete, options[:index], options[:type], id, options)
-        result["ok"]
+
+        if @batch
+          @batch << { :delete => { :_index => options[:index], :_type => options[:type], :_id => id }}
+        else
+          result = execute(:delete, options[:index], options[:type], id, options)
+          result["ok"]
+        end
       end
 
       #df	 The default field to use when no field prefix is defined within the query.
@@ -87,6 +97,16 @@ module ElasticSearch
         count_options = slice_hash(options, :df, :analyzer, :default_operator)
         response = execute(:count, options[:index], options[:type], query, count_options)
         response["count"].to_i #TODO check if count is nil
+      end
+
+      # Starts a bulk operation batch and yields self. Index and delete requests will be 
+      # queued until the block closes, then sent as a single _bulk call.
+      def bulk
+        @batch = []
+        yield(self)
+        response = execute(:bulk, @batch)
+      ensure
+        @batch = nil
       end
 
       private
