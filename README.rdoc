@@ -10,8 +10,8 @@ Copyright 2010 Grant Rodgers. See included LICENSE file.
 == Features
 
 * Automatic failover, retry, and peer discovery
-* Multiple transports (HTTP, Thrift, Memcached TODO)
-* Multiple encodings (JSON (Yajl), Smile TODO)
+* Support for multiple transports (HTTP, Thrift, Memcached TODO)
+* Support for multiple encodings (JSON (Yajl), Smile TODO)
 
 == Usage
 
