@@ -2,43 +2,44 @@ require 'test_helper'
 
 class TypeTest < Test::Unit::TestCase
   context "Test with differents Types" do
-    #TODO figure out how to have one setup and one teardown
+
     setup do
-      @client = ElasticSearch.new('127.0.0.1:9200', :index => "twitter", :type => "tweet")
+      @first_index = 'first-' + Time.now.to_i.to_s
+      @second_index = 'second-' + Time.now.to_i.to_s
+      @third_index = 'third-' + Time.now.to_i.to_s
+      @client = ElasticSearch.new('127.0.0.1:9200', :index => @first_index, :type => "tweet")
       @client.index({:user => "kimchy"}, :id => 1)
       @client.index({:user => "kimchy"}, :id => 2, :type => "grillo")
       @client.index({:user => "kimchy"}, :id => 3, :type => "cote")
-      @client.index({:user => "kimchy"}, :id => 4, :index => "cotes", :type => "cote")
-      @client.index({:user => "kimchy"}, :id => 5, :index => "menchos", :type => "mencho")
-      @client.index({:user => "kimchy"}, :id => 6, :index => "menchos", :type => "cote")
-      @client.refresh("twitter", "cotes", "menchos")
+      @client.index({:user => "kimchy"}, :id => 4, :index => @second_index, :type => "cote")
+      @client.index({:user => "kimchy"}, :id => 5, :index => @third_index, :type => "mencho")
+      @client.index({:user => "kimchy"}, :id => 6, :index => @third_index, :type => "cote")
+      @client.refresh(@first_index, @second_index, @third_index)
     end
 
     teardown do
-      #@client.delete_index("twitter")
-      #@client.delete_index("cotes")
-      #@client.delete_index("menchos")
+      @client.delete_index(@first_index)
+      @client.delete_index(@second_index)
+      @client.delete_index(@third_index)
     end
 
-    should "search in all indexes" do
+    should "Test different stages using indexes and types" do
+      # Search in all indexes
       assert_equal @client.count("kimchy",{:index => "", :type => ""}), 6
-    end
-    
-    should "search in all types with index twitter" do
-      assert_equal @client.count("kimchy",{:index => "twitter", :type => ""}), 3
-    end
-    
-    should "search in index twitter with types tweet,cote" do
-      assert_equal @client.count("kimchy",{:index => "twitter", :type => "tweet,cote"}), 2
-    end
-    
-    should "search in index twitter,cotes" do
-      assert_equal @client.count("kimchy",{:index => "twitter,cotes",  :type => ""}), 4
-    end
-    
-    should "search in types grillo,cote of all indexes" do
+      
+      # Search in all types with index first
+      assert_equal @client.count("kimchy",{:index => @first_index, :type => ""}), 3
+      
+      # Search in first index with types tweet,cote
+      assert_equal @client.count("kimchy",{:index => @first_index, :type => "tweet,cote"}), 2
+      
+      # Search in index first and second
+      @first_and_second = @first_index + ',' + @second_index  
+      assert_equal @client.count("kimchy",{:index => @first_and_second,  :type => ""}), 4
+      
+      # Search in types grillo,cote of all indexes" do
       assert_equal @client.count("kimchy",{:index => "",  :type => "grillo,cote"}), 4
     end
-    
+
   end
 end
