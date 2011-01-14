@@ -97,6 +97,10 @@ module ElasticSearch
       def update_mapping(index, type, mapping, options)
         standard_request(:put, {:index => index, :type => type, :op => "_mapping"}, options, encoder.encode(mapping))
       end
+      
+      def delete_mapping(index, type)
+        standard_request(:delete, {:index => index, :type => type})
+      end
 
       def flush(index_list, options={})
         standard_request(:post, {:index => index_list, :op => "_flush"}, options, "")
