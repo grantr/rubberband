@@ -98,6 +98,10 @@ module ElasticSearch
         standard_request(:put, {:index => index, :type => type, :op => "_mapping"}, options, encoder.encode(mapping))
       end
 
+      def index_mapping(index_list, options={})
+        standard_request(:get, {:index => index_list, :op => "_mapping"})
+      end
+
       def flush(index_list, options={})
         standard_request(:post, {:index => index_list, :op => "_flush"}, options, "")
       end

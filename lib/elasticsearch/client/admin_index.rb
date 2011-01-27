@@ -11,6 +11,13 @@ module ElasticSearch
           execute(:index_status, indices, options)
         end
 
+        def index_mapping(*args)
+          options = args.last.is_a?(Hash) ? args.pop : {}
+          indices = args.empty? ? [(default_index || :all)] : args.flatten
+          indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+          execute(:index_mapping, indices, options)
+        end
+
         # options: number_of_shards, number_of_replicas
         def create_index(index, create_options={}, options={})
           unless create_options[:index]
