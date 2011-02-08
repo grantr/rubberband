@@ -20,6 +20,9 @@ module ElasticSearch
         end
       end
 
+      alias_method :put, :index
+
+
       def get(id, options={})
         index, type, options = extract_required_scope(options)
         # index
@@ -48,6 +51,10 @@ module ElasticSearch
         response = execute(:bulk, @batch)
       ensure
         @batch = nil
+      end
+
+      def delete_by_query
+        raise NotImplementedError
       end
 
     end

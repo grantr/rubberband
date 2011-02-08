@@ -1,6 +1,7 @@
 module ElasticSearch
   module Api
     module Query
+
       #df	 The default field to use when no field prefix is defined within the query.
       #analyzer	 The analyzer name to be used when analyzing the query string.
       #default_operator	 The default operator to be used, can be AND or OR. Defaults to OR.
@@ -19,11 +20,6 @@ module ElasticSearch
         execute(:search, index, type, query, options)
       end
 
-      #ids_only Return ids instead of hits
-      def scroll(scroll_id, options={})
-        execute(:scroll, scroll_id)
-      end 
-
       #df	 The default field to use when no field prefix is defined within the query.
       #analyzer	 The analyzer name to be used when analyzing the query string.
       #default_operator	 The default operator to be used, can be AND or OR. Defaults to OR.
@@ -32,6 +28,15 @@ module ElasticSearch
 
         execute(:count, index, type, query, options)
       end
+
+      def more_like_this
+        raise NotImplementedError
+      end
+
+      #ids_only Return ids instead of hits
+      def scroll(scroll_id, options={})
+        execute(:scroll, scroll_id)
+      end 
     end
   end
 end

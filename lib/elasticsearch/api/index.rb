@@ -4,18 +4,15 @@ module ElasticSearch
       PSEUDO_INDICES = [:all]
 
       def index_status(*args)
-        options = args.last.is_a?(Hash) ? args.pop : {}
-        indices = args.empty? ? [(default_index || :all)] : args.flatten
-        indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+        indices, options = extract_indices_and_options(*args)
         execute(:index_status, indices, options)
       end
 
-      def index_mapping(*args)
-        options = args.last.is_a?(Hash) ? args.pop : {}
-        indices = args.empty? ? [(default_index || :all)] : args.flatten
-        indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
-        execute(:index_mapping, indices, options)
+      def get_mapping(*args)
+        indices, options = extract_indices_and_options(*args)
+        execute(:get_mapping, indices, options)
       end
+      alias_method :index_mapping, :get_mapping
 
       # options: number_of_shards, number_of_replicas
       def create_index(index, create_options={}, options={})
@@ -36,7 +33,7 @@ module ElasticSearch
       # :remove => [{"index" => "alias", {"index2" => "alias2"}]
       # :remove => { "index" => "alias", "index2" => "alias2" }
       # :actions => [{:add => {:index => "index", :alias => "alias"}}]
-      def alias_index(operations, options={})
+      def put_aliases(operations, options={})
         if operations[:actions]
           alias_ops = operations
         else
@@ -51,30 +48,30 @@ module ElasticSearch
             end
           end
         end
-        execute(:alias_index, alias_ops, options)
+        execute(:put_aliases, alias_ops, options)
       end
+      alias_method :alias_index, :put_aliases
 
       # options: ignore_conflicts
-      def update_mapping(mapping, options={})
+      def put_mapping(mapping, options={})
         index, type, options = extract_required_scope(options)
 
-        options = options.dup
-        indices = Array(index)
         unless mapping[type]
           mapping = { type => mapping }
         end
 
+        indices = Array(index)
         indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
-        execute(:update_mapping, indices, type, mapping, options)
+
+        execute(:put_mapping, indices, type, mapping, options)
       end
+      alias_method :update_mapping, :put_mapping
 
       # list of indices, or :all
       # options: refresh
       # default: default_index if defined, otherwise :all
       def flush(*args)
-        options = args.last.is_a?(Hash) ? args.pop : {}
-        indices = args.empty? ? [(default_index || :all)] : args.flatten
-        indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+        indices, options = extract_indices_and_options(*args)
         execute(:flush, indices, options)
       end
 
@@ -82,9 +79,7 @@ module ElasticSearch
       # no options
       # default: default_index if defined, otherwise all
       def refresh(*args)
-        options = args.last.is_a?(Hash) ? args.pop : {}
-        indices = args.empty? ? [(default_index || :all)] : args.flatten
-        indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+        indices, options = extract_indices_and_options(*args)
         execute(:refresh, indices, options)
       end
 
@@ -92,9 +87,7 @@ module ElasticSearch
       # no options
       # default: default_index if defined, otherwise all
       def snapshot(*args)
-        options = args.last.is_a?(Hash) ? args.pop : {}
-        indices = args.empty? ? [(default_index || :all)] : args.flatten
-        indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+        indices, options = extract_indices_and_options(*args)
         execute(:snapshot, indices, options)
       end
 
@@ -102,11 +95,19 @@ module ElasticSearch
       # options: max_num_segments, only_expunge_deletes, refresh, flush
       # default: default_index if defined, otherwise all
       def optimize(*args)
+        indices, options = extract_indices_and_options(*args)
+        execute(:optimize, indices, options)
+      end
+
+      private
+
+      def extract_indices_and_options(*args)
         options = args.last.is_a?(Hash) ? args.pop : {}
         indices = args.empty? ? [(default_index || :all)] : args.flatten
         indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
-        execute(:optimize, indices, options)
+        [indices, options]
       end
+        
     end
   end
 end
