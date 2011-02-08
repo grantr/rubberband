@@ -22,6 +22,7 @@ class TypeTest < Test::Unit::TestCase
       @client.delete_index(@first_index)
       @client.delete_index(@second_index)
       @client.delete_index(@third_index)
+      sleep(1)
     end
 
     should "Test different stages using indexes and types" do

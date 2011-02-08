@@ -10,6 +10,7 @@ class IndexTest < Test::Unit::TestCase
 
     teardown do
       @client.delete_index(@first_index)
+      sleep(1)
     end
 
     should "do basic ops on a document" do
@@ -18,9 +19,7 @@ class IndexTest < Test::Unit::TestCase
       assert_equal "bar", @client.get("1").foo
       assert_equal true, @client.delete("1", :refresh => true)
       assert_equal nil, @client.get("1")
-    end
 
-    should "search and count" do
       @client.index({:foo => "bar"}, :id => "1")
       @client.index({:foo => "baz"}, :id => "2")
       @client.index({:foo => "baz also"}, :id => "3")

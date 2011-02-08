@@ -10,14 +10,15 @@ class BasicTest < Test::Unit::TestCase
 
     teardown do
       @client.delete_index(@first_index)
+      sleep(1)
     end
 
+    #TODO this test fails randomly, there's some kind of timing issue here
     should "get and update mappings" do
       @client.index({:foo => "bar"}, :id => "1", :refresh => true)
       
       assert_equal({@first_index => {"tweet" => { "properties" => { "foo" => {"type" => "string" }}}}}, @client.index_mapping(@first_index))
       @client.update_mapping({"tweet" => {:properties => {:bar => {:type => "string"}}}})
-      @client.refresh
       assert_equal({@first_index => {"tweet" => { "properties" => { "foo" => {"type" => "string" }, "bar" => { "type" => "string"}}}}}, @client.index_mapping(@first_index))
     end
   end
