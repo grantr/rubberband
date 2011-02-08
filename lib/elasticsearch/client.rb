@@ -18,6 +18,5 @@ module ElasticSearch
     include Api::Query
     include Api::Index
     include Api::Cluster
-
   end
 end

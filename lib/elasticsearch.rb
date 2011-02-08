@@ -2,11 +2,13 @@ require 'rubygems'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "elasticsearch"))
 
-require 'encoding'
-require 'transport'
-require 'client'
-
 module ElasticSearch
+
+  autoload :Encoding,  'encoding'
+  autoload :Transport, 'transport'
+  autoload :Client,    'client'
+  autoload :Api,       'api'
+  autoload :Protocol,  'protocol'
 
   def self.new(servers, options={})
     ElasticSearch::Client.new(servers, options)

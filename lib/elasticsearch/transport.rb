@@ -1,6 +1,3 @@
-require "transport/base_protocol"
-require "transport/base"
-
 module ElasticSearch
   class ConnectionFailed < RetryableError; end
   class HostResolutionError < RetryableError; end
@@ -8,6 +5,8 @@ module ElasticSearch
   class RequestError < FatalError; end
 
   module Transport
+    autoload :Base, 'transport/base'
+
     autoload :HTTP, 'transport/http'
     autoload :Thrift, 'transport/thrift'
     autoload :Memcached, 'transport/memcached'
