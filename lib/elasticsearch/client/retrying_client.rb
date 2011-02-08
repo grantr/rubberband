@@ -1,8 +1,6 @@
 # mostly ripped from thrift_client
 
 module ElasticSearch
-  class NoServersAvailable < StandardError; end
-
   module RetryingClient
 
     RETRYING_DEFAULTS = {

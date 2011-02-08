@@ -1,7 +1,4 @@
 module ElasticSearch
-  class RetryableError < StandardError; end
-  class FatalError < StandardError; end
-
   module Transport
 
     DEFAULTS = {

@@ -2,11 +2,13 @@ require 'rubygems'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "elasticsearch"))
 
+require 'errors'
+
 module ElasticSearch
 
   autoload :Encoding,  'encoding'
-  autoload :Transport, 'transport'
   autoload :Client,    'client'
+  autoload :Transport, 'transport'
   autoload :Api,       'api'
   autoload :Protocol,  'protocol'
 
