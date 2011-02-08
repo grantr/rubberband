@@ -65,25 +65,26 @@ module ElasticSearch
       def search(query, options={})
         index, type, options = extract_scope(options)
 
-        #TODO this doesn't work for facets, because they have a valid query key as element. need a list of valid toplevel keys in the search dsl
-        #query = {:query => query} if query.is_a?(Hash) && !query[:query] # if there is no query element, wrap query in one
+        options[:size] ||= (options[:per_page] || options[:limit] || 10)
+        options[:from] ||= options[:size] * (options[:page].to_i-1) if options[:page] && options[:page].to_i > 1
+        options[:from] ||= options[:offset] if options[:offset]
 
-        search_options = slice_hash(options, :df, :analyzer, :default_operator, :explain, :fields, :field, :sort, :from, :size, :search_type, :limit, :per_page, :page, :offset, :scroll)
+        options[:fields] = "_id" if options[:ids_only]
 
-        search_options[:size] ||= (search_options[:per_page] || search_options[:limit] || 10)
-        search_options[:from] ||= search_options[:size] * (search_options[:page].to_i-1) if search_options[:page] && search_options[:page].to_i > 1
-        search_options[:from] ||= search_options[:offset] if search_options[:offset]
+        # options that hits take: per_page, page, ids_only
+        hits_options = options.select { |k, v| [:per_page, :page, :ids_only].include?(k) }
 
-        search_options[:fields] = "_id" if options[:ids_only]
+        # options that elasticsearch doesn't recognize: page, per_page, ids_only, limit, offset
+        options.reject! { |k, v| [:page, :per_page, :ids_only, :limit, :offset].include?(k) }
 
-        response = execute(:search, index, type, query, search_options)
-        Hits.new(response, slice_hash(options, :per_page, :page, :ids_only)).freeze #ids_only returns array of ids instead of hits
+        response = execute(:search, index, type, query, options)
+        Hits.new(response, hits_options).freeze #ids_only returns array of ids instead of hits
       end
 
       #ids_only Return ids instead of hits
       def scroll(scroll_id, options={})
         response = execute(:scroll, scroll_id)
-        Hits.new(response, slice_hash(options, :ids_only)).freeze
+        Hits.new(response, { :ids_only => options[:ids_only] }).freeze
       end 
 
       #df	 The default field to use when no field prefix is defined within the query.
@@ -92,8 +93,7 @@ module ElasticSearch
       def count(query, options={})
         index, type, options = extract_scope(options)
 
-        count_options = slice_hash(options, :df, :analyzer, :default_operator)
-        response = execute(:count, index, type, query, count_options)
+        response = execute(:count, index, type, query, options)
         response["count"].to_i #TODO check if count is nil
       end
 
@@ -105,14 +105,6 @@ module ElasticSearch
         response = execute(:bulk, @batch)
       ensure
         @batch = nil
-      end
-
-      private
-
-      def slice_hash(hash, *keys)
-        h = {}
-        keys.each { |k| h[k] = hash[k] if hash.has_key?(k) }
-        h
       end
 
     end
