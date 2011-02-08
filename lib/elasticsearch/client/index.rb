@@ -3,26 +3,22 @@ require 'client/hits'
 module ElasticSearch
   module Api
     module Index
+
+      # document
+      # type
+      # index
+      # id (optional)
+      # op_type (optional)
+      # timeout (optional)
       def index(document, options={})
         index, type, options = extract_required_scope(options)
-        # type
-        # index
-        # id (optional)
-        # op_type (optional)
-        # timeout (optional)
-        # document (optional)
 
         id = options.delete(:id)
         if @batch
           @batch << { :index => { :_index => index, :_type => type, :_id => id }}
           @batch << document
         else
-          result = execute(:index, index, type, id, document, options)
-          if result["ok"]
-            result["_id"]
-          else
-            false
-          end
+          execute(:index, index, type, id, document, options)
         end
       end
 
@@ -33,10 +29,7 @@ module ElasticSearch
         # id
         # fields
         
-        hit = execute(:get, index, type, id, options)
-        if hit
-          Hit.new(hit).freeze
-        end
+        execute(:get, index, type, id, options)
       end
 
       def delete(id, options={})
@@ -45,8 +38,7 @@ module ElasticSearch
         if @batch
           @batch << { :delete => { :_index => index, :_type => type, :_id => id }}
         else
-          result = execute(:delete, index, type, id, options)
-          result["ok"]
+          execute(:delete, index, type, id, options)
         end
       end
 
@@ -65,26 +57,12 @@ module ElasticSearch
       def search(query, options={})
         index, type, options = extract_scope(options)
 
-        options[:size] ||= (options[:per_page] || options[:limit] || 10)
-        options[:from] ||= options[:size] * (options[:page].to_i-1) if options[:page] && options[:page].to_i > 1
-        options[:from] ||= options[:offset] if options[:offset]
-
-        options[:fields] = "_id" if options[:ids_only]
-
-        # options that hits take: per_page, page, ids_only
-        hits_options = options.select { |k, v| [:per_page, :page, :ids_only].include?(k) }
-
-        # options that elasticsearch doesn't recognize: page, per_page, ids_only, limit, offset
-        options.reject! { |k, v| [:page, :per_page, :ids_only, :limit, :offset].include?(k) }
-
-        response = execute(:search, index, type, query, options)
-        Hits.new(response, hits_options).freeze #ids_only returns array of ids instead of hits
+        execute(:search, index, type, query, options)
       end
 
       #ids_only Return ids instead of hits
       def scroll(scroll_id, options={})
-        response = execute(:scroll, scroll_id)
-        Hits.new(response, { :ids_only => options[:ids_only] }).freeze
+        execute(:scroll, scroll_id)
       end 
 
       #df	 The default field to use when no field prefix is defined within the query.
@@ -93,8 +71,7 @@ module ElasticSearch
       def count(query, options={})
         index, type, options = extract_scope(options)
 
-        response = execute(:count, index, type, query, options)
-        response["count"].to_i #TODO check if count is nil
+        execute(:count, index, type, query, options)
       end
 
       # Starts a bulk operation batch and yields self. Index and delete requests will be 
