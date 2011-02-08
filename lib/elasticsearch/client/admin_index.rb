@@ -57,12 +57,10 @@ module ElasticSearch
 
         # options: ignore_conflicts
         def update_mapping(mapping, options={})
-          set_default_scope!(options)
-          raise "index and type or defaults required" unless options[:index] && options[:type]
+          index, type, options = extract_required_scope(options)
 
           options = options.dup
-          indices = Array(options.delete(:index))
-          type = options.delete(:type)
+          indices = Array(index)
           unless mapping[type]
             mapping = { type => mapping }
           end

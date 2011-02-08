@@ -4,8 +4,7 @@ module ElasticSearch
   module Api
     module Index
       def index(document, options={})
-        set_default_scope!(options)
-        raise "index and type or defaults required" unless options[:index] && options[:type]
+        index, type, options = extract_required_scope(options)
         # type
         # index
         # id (optional)
@@ -13,11 +12,12 @@ module ElasticSearch
         # timeout (optional)
         # document (optional)
 
+        id = options.delete(:id)
         if @batch
-          @batch << { :index => { :_index => options[:index], :_type => options[:type], :_id => options[:id] }}
+          @batch << { :index => { :_index => index, :_type => type, :_id => id }}
           @batch << document
         else
-          result = execute(:index, options[:index], options[:type], options[:id], document, options)
+          result = execute(:index, index, type, id, document, options)
           if result["ok"]
             result["_id"]
           else
@@ -27,27 +27,25 @@ module ElasticSearch
       end
 
       def get(id, options={})
-        set_default_scope!(options)
-        raise "index and type or defaults required" unless options[:index] && options[:type]
+        index, type, options = extract_required_scope(options)
         # index
         # type
         # id
         # fields
         
-        hit = execute(:get, options[:index], options[:type], id, options)
+        hit = execute(:get, index, type, id, options)
         if hit
           Hit.new(hit).freeze
         end
       end
 
       def delete(id, options={})
-        set_default_scope!(options)
-        raise "index and type or defaults required" unless options[:index] && options[:type]
+        index, type, options = extract_required_scope(options)
 
         if @batch
-          @batch << { :delete => { :_index => options[:index], :_type => options[:type], :_id => id }}
+          @batch << { :delete => { :_index => index, :_type => type, :_id => id }}
         else
-          result = execute(:delete, options[:index], options[:type], id, options)
+          result = execute(:delete, index, type, id, options)
           result["ok"]
         end
       end
@@ -65,7 +63,7 @@ module ElasticSearch
       #scroll Get a scroll id to continue paging through the search results. Value is the time to keep a scroll request around, e.g. 5m
       #ids_only Return ids instead of hits
       def search(query, options={})
-        set_default_scope!(options)
+        index, type, options = extract_scope(options)
 
         #TODO this doesn't work for facets, because they have a valid query key as element. need a list of valid toplevel keys in the search dsl
         #query = {:query => query} if query.is_a?(Hash) && !query[:query] # if there is no query element, wrap query in one
@@ -78,7 +76,7 @@ module ElasticSearch
 
         search_options[:fields] = "_id" if options[:ids_only]
 
-        response = execute(:search, options[:index], options[:type], query, search_options)
+        response = execute(:search, index, type, query, search_options)
         Hits.new(response, slice_hash(options, :per_page, :page, :ids_only)).freeze #ids_only returns array of ids instead of hits
       end
 
@@ -92,10 +90,10 @@ module ElasticSearch
       #analyzer	 The analyzer name to be used when analyzing the query string.
       #default_operator	 The default operator to be used, can be AND or OR. Defaults to OR.
       def count(query, options={})
-        set_default_scope!(options)
+        index, type, options = extract_scope(options)
 
         count_options = slice_hash(options, :df, :analyzer, :default_operator)
-        response = execute(:count, options[:index], options[:type], query, count_options)
+        response = execute(:count, index, type, query, count_options)
         response["count"].to_i #TODO check if count is nil
       end
 
