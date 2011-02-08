@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rubberband}
-  s.version = "0.0.6"
+  s.version = "0.0.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["grantr"]
-  s.date = %q{2011-01-07}
+  s.date = %q{2011-02-08}
   s.description = %q{An ElasticSearch client with ThriftClient-like failover handling.}
   s.email = %q{grantr@gmail.com}
   s.extra_rdoc_files = [
@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
     "TODO"
   ]
   s.files = [
+    "CONTRIBUTORS",
     "Gemfile",
     "Gemfile.lock",
     "LICENSE",
@@ -49,8 +50,10 @@ Gem::Specification.new do |s|
     "lib/elasticsearch/version.rb",
     "lib/rubberband.rb",
     "rubberband.gemspec",
+    "test/admin_test.rb",
     "test/elasticsearch_test.rb",
     "test/hits_test.rb",
+    "test/index_test.rb",
     "test/test_helper.rb",
     "test/type_test.rb",
     "vendor/elasticsearch/elasticsearch.thrift"
@@ -61,8 +64,10 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{An ElasticSearch client.}
   s.test_files = [
+    "test/admin_test.rb",
     "test/elasticsearch_test.rb",
     "test/hits_test.rb",
+    "test/index_test.rb",
     "test/test_helper.rb",
     "test/type_test.rb"
   ]
