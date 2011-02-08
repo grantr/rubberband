@@ -3,18 +3,21 @@ require 'client/retrying_client'
 require 'client/auto_discovering_client'
 
 require 'client/default_scope'
-require 'client/index'
-require 'client/admin_index'
-require 'client/admin_cluster'
+require 'api/document'
+require 'api/query'
+require 'api/index'
+require 'api/cluster'
 
 module ElasticSearch
   class Client < AbstractClient
     include RetryingClient
     include AutoDiscoveringClient
-    include Api::DefaultScope
+    include DefaultScope
+
+    include Api::Document
+    include Api::Query
     include Api::Index
-    include Api::Admin::Index
-    include Api::Admin::Cluster
+    include Api::Cluster
 
   end
 end
