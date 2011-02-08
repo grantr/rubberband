@@ -21,30 +21,20 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{An ElasticSearch client with ThriftClient-like failover handling.}
   gem.email = "grantr@gmail.com"
   gem.authors = ["grantr"]
+
+  gem.add_runtime_dependency 'patron'
+  gem.add_runtime_dependency 'yajl-ruby'
+  gem.add_development_dependency 'rspec', '~> 2.4'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/*_test.rb'
-  test.verbose = true
+require 'rspec/core'
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-end
+task :default => :spec
 
-task :default => :test
-
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  version = ElasticSearch::Version::STRING
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "rubberband #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
+require 'yard'
+YARD::Rake::YardocTask.new
