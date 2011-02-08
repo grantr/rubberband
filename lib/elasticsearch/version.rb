@@ -2,9 +2,8 @@ module ElasticSearch
   module Version
     MAJOR = 0
     MINOR = 0
-    PATCH = 6
-    BUILD = nil
+    PATCH = 7
 
-    STRING = [MAJOR, MINOR, PATCH, BUILD].compact.join('.')
+    STRING = [MAJOR, MINOR, PATCH].compact.join('.')
   end
 end
