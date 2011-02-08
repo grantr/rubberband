@@ -9,7 +9,11 @@ module ElasticSearch
     }.freeze
 
     class Base
-      include BaseProtocol
+      include Protocol::Document
+      include Protocol::Query
+      include Protocol::Index
+      include Protocol::Cluster
+      include Protocol::Helpers
 
       attr_accessor :server, :options
 
