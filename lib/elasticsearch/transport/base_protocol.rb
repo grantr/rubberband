@@ -8,7 +8,7 @@ module ElasticSearch
         else
           response = request(:put, {:index => index, :type => type, :id => id}, options, body)
         end
-        handle_error(response) unless response.status == 200
+        handle_error(response) unless (response.status == 200 or response.status == 201)
         encoder.decode(response.body)
       end
 
