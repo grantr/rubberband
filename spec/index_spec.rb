@@ -31,4 +31,13 @@ describe "index ops" do
     @client.search(:query => { :term => { :foo => 'baz' }}).should have(2).items
     @client.count(:term => { :foo => 'baz' }).should == 2
   end
+
+  it 'should return ids when given :ids_only' do
+    @client.index({:socks => "stripey"}, :id => "5")
+    @client.index({:stripey => "stripey too"}, :id => "6")
+    @client.refresh
+
+    results = @client.search({:query => { :field => { :socks => 'stripey' }}}, :ids_only => true)
+    results.should include("5")
+  end
 end
