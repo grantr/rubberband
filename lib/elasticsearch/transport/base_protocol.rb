@@ -69,9 +69,9 @@ module ElasticSearch
         encoder.decode(response.body) # {"count", "_shards"=>{"failed", "total", "successful"}}
       end
 
-      def bulk(actions)
+      def bulk(actions, options={})
         body = actions.inject("") { |a, s| a << encoder.encode(s) << "\n" }
-        response = request(:post, {:op => '_bulk'}, {}, body)
+        response = request(:post, {:op => '_bulk'}, options, body)
         handle_error(response) unless response.status == 200
         encoder.decode(response.body) # {"items => [ {"delete"/"create" => {"_index", "_type", "_id", "ok"}} ] }
       end

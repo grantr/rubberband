@@ -1,5 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
+#TODO rewrite this to check the generated url with mocks
 describe "type and index parameters" do
   before(:all) do
     @first_index = 'first-' + Time.now.to_i.to_s

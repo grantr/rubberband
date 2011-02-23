@@ -27,4 +27,7 @@ describe "bulk ops" do
     @client.get("3").socks.should == "stripey"
     @client.get("4").socks.should == "argyle"
   end
+
+  it "should take options"
+  # check that url generated has options in query string
 end

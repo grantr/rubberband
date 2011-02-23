@@ -14,6 +14,7 @@ module ElasticSearch
 
         id = options.delete(:id)
         if @batch
+          #TODO add routing, parent
           @batch << { :index => { :_index => index, :_type => type, :_id => id }}
           @batch << document
         else
@@ -43,6 +44,7 @@ module ElasticSearch
         index, type, options = extract_required_scope(options)
 
         if @batch
+          #TODO add routing, parent
           @batch << { :delete => { :_index => index, :_type => type, :_id => id }}
         else
           result = execute(:delete, index, type, id, options)
@@ -97,10 +99,10 @@ module ElasticSearch
 
       # Starts a bulk operation batch and yields self. Index and delete requests will be 
       # queued until the block closes, then sent as a single _bulk call.
-      def bulk
+      def bulk(options={})
         @batch = []
         yield(self)
-        response = execute(:bulk, @batch)
+        response = execute(:bulk, @batch, options)
       ensure
         @batch = nil
       end
