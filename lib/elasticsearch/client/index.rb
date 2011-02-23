@@ -71,14 +71,12 @@ module ElasticSearch
 
         options[:fields] = "_id" if options[:ids_only]
 
-        # options that hits take: per_page, page, ids_only
-        hits_options = options.select { |k, v| [:per_page, :page, :ids_only].include?(k) }
-
         # options that elasticsearch doesn't recognize: page, per_page, ids_only, limit, offset
-        options.reject! { |k, v| [:page, :per_page, :ids_only, :limit, :offset].include?(k) }
+        search_options = options.reject { |k, v| [:page, :per_page, :ids_only, :limit, :offset].include?(k) }
 
-        response = execute(:search, index, type, query, options)
-        Hits.new(response, hits_options).freeze #ids_only returns array of ids instead of hits
+        response = execute(:search, index, type, query, search_options)
+
+        Hits.new(response, {:per_page => options[:per_page], :page => options[:page], :ids_only => options[:ids_only]}).freeze #ids_only returns array of ids instead of hits
       end
 
       #ids_only Return ids instead of hits
