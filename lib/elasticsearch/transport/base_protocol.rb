@@ -46,8 +46,9 @@ module ElasticSearch
         results # {"hits"=>{"hits"=>[{"_id", "_type", "_source", "_index", "_score"}], "total"}, "_shards"=>{"failed", "total", "successful"}}
       end
 
-      def scroll(scroll_id)
-        response = request(:get, {:op => "_search/scroll"}, {:scroll_id => scroll_id })
+      def scroll(scroll_id, options={})
+        # patron cannot submit get requests with content, so we pass the scroll_id in the parameters
+        response = request(:get, {:op => "_search/scroll"}, options.merge(:scroll_id => scroll_id))
         handle_error(response) unless response.status == 200
         results = encoder.decode(response.body)
         # unescape ids

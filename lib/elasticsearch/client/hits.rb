@@ -52,7 +52,7 @@ module ElasticSearch
         @total_entries = response["hits"]["total"]
         @_shards = response["_shards"]
         @facets = response["facets"]
-        @scroll_id = response["_scrollId"]
+        @scroll_id = response["_scroll_id"] || response["_scrollId"]
         populate(@options[:ids_only])
       end
 

@@ -82,9 +82,18 @@ module ElasticSearch
       end
 
       #ids_only Return ids instead of hits
-      def scroll(scroll_id, options={})
-        response = execute(:scroll, scroll_id)
-        Hits.new(response, { :ids_only => options[:ids_only] }).freeze
+      #pass a block to execute the block for each batch of hits
+      def scroll(scroll_id, options={}, &block)
+        begin
+          search_options = options.reject { |k, v| [:page, :per_page, :ids_only, :limit, :offset].include?(k) }
+          response = execute(:scroll, scroll_id, options)
+          hits = Hits.new(response, { :ids_only => options[:ids_only] }).freeze
+          if block_given? && !hits.empty?
+            yield hits 
+            scroll_id = hits.scroll_id
+          end
+        end until !block_given? || hits.empty?
+        hits
       end 
 
       #df	 The default field to use when no field prefix is defined within the query.
