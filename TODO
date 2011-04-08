@@ -7,3 +7,7 @@ handle partial failure cases where some shards are unsuccessful (optionally rais
 tests/specs/features
 memcached transport
 smile encoding
+
+make ElasticSearch namespace the lowerlevel client
+make RubberBand the higher level, with support for more stuff
+ultimately rubberband will become its own gem that depends on elasticsearch
