@@ -2,6 +2,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     diff-lcs (1.1.2)
+    escape_utils (0.2.3)
     git (1.2.5)
     jeweler (1.5.2)
       bundler (~> 1.0.0)
@@ -30,6 +31,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.0.0)
+  escape_utils (>= 0.2.3)
   jeweler (~> 1.5.2)
   mocha (~> 0.9.11)
   patron

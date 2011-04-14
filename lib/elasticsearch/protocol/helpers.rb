@@ -1,3 +1,5 @@
+require 'escape_utils'
+
 module ElasticSearch
   module Protocol
     module Helpers
@@ -42,17 +44,12 @@ module ElasticSearch
         nil
       end
 
-      # faster than CGI.escape
-      # stolen from RSolr, who stole it from Rack
       def escape(string)
-        string.to_s.gsub(/([^ a-zA-Z0-9_.-]+)/n) {
-          #'%'+$1.unpack('H2'*$1.size).join('%').upcase
-          '%'+$1.unpack('H2'*bytesize($1)).join('%').upcase
-        }.tr(' ', '+')
+        EscapeUtils.escape_url(string)
       end
 
       def unescape(string)
-        CGI.unescape(string)
+        EscapeUtils.unescape_url(string)
       end
 
       if ''.respond_to?(:force_encoding) && ''.respond_to?(:encoding)

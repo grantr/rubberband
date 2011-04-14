@@ -2,6 +2,7 @@ source "http://rubygems.org"
 
 gem "patron"
 gem "yajl-ruby"
+gem "escape_utils", ">= 0.2.3"
 
 group :development do
   gem "bundler", "~> 1.0.0"
