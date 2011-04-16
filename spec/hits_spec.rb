@@ -7,8 +7,6 @@ describe ElasticSearch::Api::Hit do
 
   its(:id) { should == response["_id"] }
 
-  its(:attributes) { should be_frozen }
-
   it "should set hit attributes" do
     subject.foo.should == response["_source"]["foo"]
   end
@@ -35,16 +33,6 @@ describe ElasticSearch::Api::Hits do
       response["hits"]["hits"].each_with_index do |hit, i|
         subject.hits[i].should == ElasticSearch::Api::Hit.new(hit)
       end
-    end
-
-
-    it "should freeze all hits" do
-      subject.hits.all? { |h| h.frozen? }.should be_true
-    end
-
-    it "should freeze hits array when frozen" do
-      subject.freeze
-      subject.hits.should be_frozen
     end
 
     it { should respond_to(:to_a) }

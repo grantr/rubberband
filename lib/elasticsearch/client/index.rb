@@ -36,7 +36,7 @@ module ElasticSearch
         
         hit = execute(:get, index, type, id, options)
         if hit
-          Hit.new(hit).freeze
+          Hit.new(hit)
         end
       end
 
@@ -78,7 +78,7 @@ module ElasticSearch
 
         response = execute(:search, index, type, query, search_options)
 
-        Hits.new(response, {:per_page => options[:per_page], :page => options[:page], :ids_only => options[:ids_only]}).freeze #ids_only returns array of ids instead of hits
+        Hits.new(response, {:per_page => options[:per_page], :page => options[:page], :ids_only => options[:ids_only]}) #ids_only returns array of ids instead of hits
       end
 
       #ids_only Return ids instead of hits
@@ -87,7 +87,7 @@ module ElasticSearch
         begin
           search_options = options.reject { |k, v| [:page, :per_page, :ids_only, :limit, :offset].include?(k) }
           response = execute(:scroll, scroll_id, options)
-          hits = Hits.new(response, { :ids_only => options[:ids_only] }).freeze
+          hits = Hits.new(response, { :ids_only => options[:ids_only] })
           if block_given? && !hits.empty?
             yield hits 
             scroll_id = hits.scroll_id

@@ -10,7 +10,6 @@ module ElasticSearch
         hit.merge!(hit["_source"]) if hit["_source"]
         hit["id"] ||= hit["_id"]
         super(hit)
-        @table.freeze
       end
 
       def attributes
@@ -76,7 +75,7 @@ module ElasticSearch
       private
 
       def populate(ids_only=false)
-        @hits = @response["hits"]["hits"].collect { |h| ids_only ? h["_id"] : Hit.new(h).freeze }
+        @hits = @response["hits"]["hits"].collect { |h| ids_only ? h["_id"] : Hit.new(h) }
       end
     end
   end
