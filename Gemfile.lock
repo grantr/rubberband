@@ -1,16 +1,16 @@
+PATH
+  remote: .
+  specs:
+    rubberband (0.0.12)
+      patron
+      yajl-ruby
+
 GEM
   remote: http://rubygems.org/
   specs:
     diff-lcs (1.1.2)
-    git (1.2.5)
-    jeweler (1.5.2)
-      bundler (~> 1.0.0)
-      git (>= 1.2.5)
-      rake
-    mocha (0.9.11)
-      rake
-    patron (0.4.10)
-    rake (0.8.7)
+    mocha (0.9.12)
+    patron (0.4.11)
     rspec (2.5.0)
       rspec-core (~> 2.5.0)
       rspec-expectations (~> 2.5.0)
@@ -19,10 +19,10 @@ GEM
     rspec-expectations (2.5.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.5.0)
-    simplecov (0.3.9)
-      simplecov-html (>= 0.3.7)
-    simplecov-html (0.3.9)
-    yajl-ruby (0.7.8)
+    simplecov (0.4.1)
+      simplecov-html (~> 0.4.3)
+    simplecov-html (0.4.3)
+    yajl-ruby (0.8.2)
     yard (0.6.4)
 
 PLATFORMS
@@ -30,10 +30,8 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.0.0)
-  jeweler (~> 1.5.2)
   mocha (~> 0.9.11)
-  patron
-  rspec (~> 2.4)
+  rspec (~> 2)
+  rubberband!
   simplecov (>= 0.3.8)
-  yajl-ruby
-  yard (~> 0.6)
+  yard (~> 0.6.0)
