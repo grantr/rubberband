@@ -15,7 +15,7 @@ module ElasticSearch
         id = options.delete(:id)
         if @batch
           #TODO add routing, parent
-          @batch << { :index => { :_index => index, :_type => type, :_id => id }}
+          @batch << { :index => { :_index => index, :_type => type, :_id => id }.merge(options)}
           @batch << document
         else
           result = execute(:index, index, type, id, document, options)
