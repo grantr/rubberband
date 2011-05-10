@@ -28,6 +28,18 @@ module ElasticSearch
         handle_error(response) unless response.status == 200 # ElasticSearch always returns 200 on delete, even if the object doesn't exist
         encoder.decode(response.body)
       end
+      
+      def delete_by_query(index, type, query, options={})
+        # pass the query through the parameters in all the cases, since
+        # DELETE with a body are ambiguously supported
+        if query.is_a?(Hash)
+          params = options.merge(:source => encoder.encode(query))
+        else
+          raise ArgumentError("query is neither a string of a hash #{query.class}") unless query.is_a?(String)
+          params = options.merge(:q => query)
+        end
+        response = request(:delete, {:index => index, :type => type, :op => "_query"}, params)
+      end      
 
       def search(index, type, query, options={})
         if query.is_a?(Hash)
