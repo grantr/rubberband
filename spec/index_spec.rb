@@ -40,4 +40,15 @@ describe "index ops" do
     results = @client.search({:query => { :field => { :socks => 'stripey' }}}, :ids_only => true)
     results.should include("5")
   end
+
+  it 'should delete by query' do
+    @client.index({:deleted => "bar"}, :id => "d1")
+    @client.index({:deleted => "bar"}, :id => "d2")
+    @client.refresh
+
+    @client.count(:term => { :deleted => 'bar'}).should == 2
+    @client.delete_by_query(:term => { :deleted => 'bar' })
+    @client.refresh
+    @client.count(:term => { :deleted => 'bar'}).should == 0
+  end
 end
