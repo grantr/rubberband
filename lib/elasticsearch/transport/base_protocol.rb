@@ -35,10 +35,9 @@ module ElasticSearch
         if query.is_a?(Hash)
           params = options.merge(:source => encoder.encode(query))
         else
-          raise ArgumentError("query is neither a string of a hash #{query.class}") unless query.is_a?(String)
           params = options.merge(:q => query)
         end
-        response = request(:delete, {:index => index, :type => type, :op => "_query"}, params)
+        request(:delete, {:index => index, :type => type, :op => "_query"}, params)
       end      
 
       def search(index, type, query, options={})

@@ -54,7 +54,7 @@ module ElasticSearch
       
       def delete_by_query(query, options = {})
         index, type, options = extract_required_scope(options)
-        return execute(:delete_by_query, index, type, query, options)
+        execute(:delete_by_query, index, type, query, options)
       end
 
       #df	 The default field to use when no field prefix is defined within the query.
