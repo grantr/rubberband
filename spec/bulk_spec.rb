@@ -28,6 +28,13 @@ describe "bulk ops" do
     @client.get("4").socks.should == "argyle"
   end
 
-  it "should take options"
-  # check that url generated has options in query string
+  it "should take options" do
+    @client.bulk do |c|
+      c.index({:foo => 'bar'}, :id => '1', :_routing => '1', :_parent => '1')
+      #TODO better way to test this?
+      meta = c.instance_variable_get('@batch').detect { |b| b.has_key?(:index) }
+      meta[:index].should include(:_routing => '1')
+      meta[:index].should include(:_parent => '1')
+    end
+  end
 end
