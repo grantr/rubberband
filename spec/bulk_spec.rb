@@ -28,6 +28,23 @@ describe "bulk ops" do
     @client.get("4").socks.should == "argyle"
   end
 
+  it "should allow nested bulk calls" do
+    @client.bulk do |c|
+      c.index({:foo => 'bar'}, :id => '11')
+      c.index({:foo => 'baz'}, :id => '12')
+      @client.bulk do
+        @client.index({:socks => 'stripey'}, :id => '13')
+        @client.index({:socks => 'argyle'}, :id => '14')
+      end
+    end
+    @client.refresh
+
+    @client.get("11").foo.should == "bar"
+    @client.get("12").foo.should == "baz"
+    @client.get("13").socks.should == "stripey"
+    @client.get("14").socks.should == "argyle"
+  end
+
   it "should take options" do
     @client.bulk do |c|
       c.index({:foo => 'bar'}, :id => '1', :_routing => '1', :_parent => '1')

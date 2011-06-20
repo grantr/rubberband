@@ -114,13 +114,19 @@ module ElasticSearch
       # Starts a bulk operation batch and yields self. Index and delete requests will be 
       # queued until the block closes, then sent as a single _bulk call.
       def bulk(options={})
-        @batch = []
-        yield(self)
-        response = execute(:bulk, @batch, options)
-      ensure
-        @batch = nil
+        # allow nested bulk calls
+        if @batch
+          yield(self)
+        else
+          begin
+            @batch = []
+            yield(self)
+            response = execute(:bulk, @batch, options)
+          ensure
+            @batch = nil
+          end
+        end
       end
-
     end
   end
 end
