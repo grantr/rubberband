@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubberband (0.0.12)
+    rubberband (0.1.1)
       patron
       yajl-ruby
 
