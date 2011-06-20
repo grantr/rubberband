@@ -69,6 +69,15 @@ module ElasticSearch
           execute(:update_mapping, indices, type, mapping, options)
         end
 
+        def update_settings(settings, options={})
+          index, type, options = extract_scope(options)
+          execute(:update_settings, index, settings, options)
+        end
+
+        def get_settings(index, options={})
+          execute(:get_settings, index, options)
+        end
+
         # list of indices, or :all
         # options: refresh
         # default: default_index if defined, otherwise :all

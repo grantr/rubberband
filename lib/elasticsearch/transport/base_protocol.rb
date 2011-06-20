@@ -114,6 +114,14 @@ module ElasticSearch
         standard_request(:get, {:index => index_list, :op => "_mapping"})
       end
 
+      def update_settings(index, settings, options)
+        standard_request(:put, {:index => index, :op => "_settings"}, options, encoder.encode(settings))
+      end
+
+      def get_settings(index, options)
+        standard_request(:get, {:index => index, :op => "_settings"}, options)
+      end
+
       def flush(index_list, options={})
         standard_request(:post, {:index => index_list, :op => "_flush"}, options, "")
       end
