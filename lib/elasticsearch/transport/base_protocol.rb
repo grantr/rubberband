@@ -114,6 +114,10 @@ module ElasticSearch
         standard_request(:get, {:index => index_list, :op => "_mapping"})
       end
 
+      def delete_mapping(index, type, options={})
+        standard_request(:delete, {:index => index, :type => type, :op => "_mapping"})
+      end
+
       def update_settings(index, settings, options)
         standard_request(:put, {:index => index, :op => "_settings"}, options, encoder.encode(settings))
       end

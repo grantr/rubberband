@@ -69,6 +69,11 @@ module ElasticSearch
           execute(:update_mapping, indices, type, mapping, options)
         end
 
+        def delete_mapping(options={})
+          index, type, options = extract_required_scope(options)
+          execute(:delete_mapping, index, type, options)
+        end
+
         def update_settings(settings, options={})
           index, type, options = extract_scope(options)
           execute(:update_settings, index, settings, options)
@@ -97,7 +102,7 @@ module ElasticSearch
           indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
           execute(:refresh, indices, options)
         end
-        
+
         # list of indices, or :all
         # no options
         # default: default_index if defined, otherwise all
