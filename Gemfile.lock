@@ -10,7 +10,7 @@ GEM
   specs:
     diff-lcs (1.1.2)
     mocha (0.9.12)
-    patron (0.4.11)
+    patron (0.4.12)
     rspec (2.5.0)
       rspec-core (~> 2.5.0)
       rspec-expectations (~> 2.5.0)
@@ -31,6 +31,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.0.0)
   mocha (~> 0.9.0)
+  patron (~> 0.4.12)
   rspec (~> 2.0)
   rubberband!
   simplecov (>= 0.3.8)

@@ -7,7 +7,7 @@ describe "type and index parameters" do
     @second_index = 'second-' + Time.now.to_i.to_s
     @third_index = 'third-' + Time.now.to_i.to_s
     @username = 'kimchy' + Time.now.to_i.to_s
-    @client = ElasticSearch.new('127.0.0.1:9200', :index => @first_index, :type => "tweet")
+    @client = ElasticSearch.new('http://127.0.0.1:9200', :index => @first_index, :type => "tweet")
     @client.index({:user => @username}, :id => 1)
     @client.index({:user => @username}, :id => 2, :type => "grillo")
     @client.index({:user => @username}, :id => 3, :type => "cote")

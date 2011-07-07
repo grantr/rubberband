@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe "basic ops" do
   before(:all) do
     @first_index = 'first-' + Time.now.to_i.to_s
-    @client = ElasticSearch.new('127.0.0.1:9200', :index => @first_index, :type => "tweet")
+    @client = ElasticSearch.new('http://127.0.0.1:9200', :index => @first_index, :type => "tweet")
   end
 
   after(:all) do
