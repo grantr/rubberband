@@ -174,7 +174,7 @@ module ElasticSearch
 
       def standard_request(*args)
         response = request(*args)
-        handle_error(response) unless response.status == 200
+        handle_error(response) unless response.status >= 200 && response.status < 300
         encoder.decode(response.body)
       end
 
