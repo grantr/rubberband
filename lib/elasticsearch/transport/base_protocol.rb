@@ -141,6 +141,24 @@ module ElasticSearch
       def optimize(index_list, options={})
         standard_request(:post, {:index => index_list, :op => "_optimize"}, options, {})
       end
+
+      def create_river(type, create_options={}, options={})
+        standard_request(:put, {:index => "_river", :type => type, :op => "_meta"}, options, encoder.encode(create_options))
+      end
+
+      def get_river(type, options={})
+        standard_request(:get, {:index => "_river", :type => type, :op => "_meta"})
+      end
+
+      def river_status(type, options={})
+        standard_request(:get, {:index => "_river", :type => type, :op => "_status"})
+      end
+
+      def delete_river(type, options={})
+        params = {:index => "_river"}
+        params[:type] = type unless type.nil?
+        standard_request(:delete, params)
+      end
     end
 
     module ClusterAdminProtocol

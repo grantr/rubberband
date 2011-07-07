@@ -122,6 +122,22 @@ module ElasticSearch
           indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
           execute(:optimize, indices, options)
         end
+
+        def create_river(type, create_options, options={})
+          execute(:create_river, type, create_options, options)
+        end
+
+        def get_river(type, options={})
+          execute(:get_river, type, options)
+        end
+
+        def river_status(type, options={})
+          execute(:river_status, type, options)
+        end
+
+        def delete_river(type=nil, options={})
+          execute(:delete_river, type, options)
+        end
       end
     end
   end
