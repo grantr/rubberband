@@ -127,6 +127,17 @@ module ElasticSearch
           end
         end
       end
+      
+      # minor multi get support
+      def multi_get(ids, options={})
+        index, type, options = extract_required_scope(options)
+        results = execute(:multi_get, index, type, ids, options)
+        if(results)
+          hits = []
+          results.each { |hit| hits << Hit.new(hit) }
+          hits
+        end
+      end
     end
   end
 end
