@@ -5,7 +5,7 @@ An ElasticSearch client with ThriftClient-like failover handling.
 
 == License
 
-Copyright 2010 Grant Rodgers. See included LICENSE file.
+Copyright 2010-2011 Grant Rodgers. See included LICENSE file.
 
 == Features
 
