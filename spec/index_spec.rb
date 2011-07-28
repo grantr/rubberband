@@ -51,4 +51,13 @@ describe "index ops" do
     @client.refresh
     @client.count(:term => { :deleted => 'bar'}).should == 0
   end
+  
+  it 'should perform a successful multi get' do
+    @client.index({:foo => "bar"}, :id => "1")
+    @client.index({:foo => "baz"}, :id => "2")
+    @client.index({:foo => "bazbar"}, :id => "3")
+    ids = ["1", "2", "3"]
+    results = @client.multi_get(ids).inject([]) { |r,e| r << e.id }
+    results.should == ids
+  end
 end

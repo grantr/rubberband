@@ -87,6 +87,18 @@ module ElasticSearch
         handle_error(response) unless response.status == 200
         encoder.decode(response.body) # {"items => [ {"delete"/"create" => {"_index", "_type", "_id", "ok"}} ] }
       end
+      
+      # Uses a post request so we can send ids in content
+      def multi_get(index, type, ids, options={})
+        # { "docs" = [ {...}, {...}, ...]}
+        results = standard_request(:post, { :index => index, :type => type, :op => "_mget"}, 
+                                   options, encoder.encode({"ids" => ids}))['docs']
+        results.each do |hit|
+          unescape_id!(hit)
+          set_encoding!(hit)
+        end
+        results
+      end
     end
 
     module IndexAdminProtocol
