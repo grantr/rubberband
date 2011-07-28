@@ -24,7 +24,7 @@ GEM
       simplecov-html (~> 0.4.3)
     simplecov-html (0.4.3)
     yajl-ruby (0.8.2)
-    yard (0.6.4)
+    yard (0.7.2)
 
 PLATFORMS
   ruby
@@ -37,4 +37,4 @@ DEPENDENCIES
   rspec (~> 2.0)
   rubberband!
   simplecov (>= 0.3.8)
-  yard (~> 0.6.0)
+  yard (>= 0.7.0)
