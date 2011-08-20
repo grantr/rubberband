@@ -12,6 +12,11 @@ module ElasticSearch
       def initialize(server, options={})
         super
         @options = DEFAULTS.merge(@options)
+
+        # Make sure the server starts with a URI scheme.
+        unless @server =~ /^(([^:\/?#]+):)?\/\//
+          @server = 'http://' + @server
+        end
       end
 
       def connect!
