@@ -7,5 +7,9 @@ describe ElasticSearch::Transport::HTTP do
     it 'should prepend the default scheme' do
       described_class.new(server).instance_variable_get('@server').should =~ /^http:\/\//
     end
+
+    it 'should make default protocol configurable' do
+      described_class.new(server, :protocol => 'https').instance_variable_get('@server').should =~ /^https:\/\//
+    end
   end
 end

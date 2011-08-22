@@ -6,7 +6,8 @@ module ElasticSearch
     class HTTP < Base
 
       DEFAULTS = {
-        :timeout => 5
+        :timeout => 5,
+        :protocol => 'http'
       }.freeze
 
       def initialize(server, options={})
@@ -15,7 +16,7 @@ module ElasticSearch
 
         # Make sure the server starts with a URI scheme.
         unless @server =~ /^(([^:\/?#]+):)?\/\//
-          @server = 'http://' + @server
+          @server = "#{@options[:protocol]}://" + @server
         end
       end
 
