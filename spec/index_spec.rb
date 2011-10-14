@@ -52,12 +52,33 @@ describe "index ops" do
     @client.count(:term => { :deleted => 'bar'}).should == 0
   end
   
-  it 'should perform a successful multi get' do
+  it 'should perform a successful multi get with an array' do
     @client.index({:foo => "bar"}, :id => "1")
     @client.index({:foo => "baz"}, :id => "2")
     @client.index({:foo => "bazbar"}, :id => "3")
     ids = ["1", "2", "3"]
     results = @client.multi_get(ids).inject([]) { |r,e| r << e.id }
     results.should == ids
+  end
+ 
+  it 'should perform a successful multi get' do
+    @client.index({:foo => "bar", :bar => "boo1"}, :id => "1")
+    @client.index({:foo => "baz", :bar => "boo2"}, :id => "2")
+    @client.index({:foo => "bazbar", :bar => "boo3"}, :id => "3")
+    query = {
+      "docs" => [
+        { "_id" => "1", "fields" => [] },
+        { "_id" => "2" },
+        { "_id" => "3", "fields" => ["foo"] },
+      ]
+    }
+    results = @client.multi_get(query).inject([]) do
+      |r,e| r << { "id" => e.id, "fields" => e.fields, "_source" => e._source }
+    end
+    results.should == [
+      { "id" => "1", "fields" => nil, "_source" => nil },
+      { "id" => "2", "fields" => nil, "_source" => { "foo" => "baz", "bar" => "boo2" } },
+      { "id" => "3", "fields" => { "foo" => "bazbar" }, "_source" => nil },
+    ]
   end
 end

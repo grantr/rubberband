@@ -89,10 +89,13 @@ module ElasticSearch
       end
       
       # Uses a post request so we can send ids in content
-      def multi_get(index, type, ids, options={})
+      def multi_get(index, type, query, options={})
         # { "docs" = [ {...}, {...}, ...]}
+        if query.is_a?(Array)
+          query = { "ids" => query }
+        end
         results = standard_request(:post, { :index => index, :type => type, :op => "_mget"}, 
-                                   options, encoder.encode({"ids" => ids}))['docs']
+                                   options, encoder.encode(query))['docs']
         results.each do |hit|
           unescape_id!(hit)
           set_encoding!(hit)
