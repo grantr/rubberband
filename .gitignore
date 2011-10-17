@@ -17,3 +17,6 @@ cuke_*.log
 
 # ctags generated
 tags
+
+# Gemfile.lock should not be checked in for gems
+Gemfile.lock
