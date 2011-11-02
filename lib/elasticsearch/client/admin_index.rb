@@ -55,6 +55,10 @@ module ElasticSearch
           execute(:alias_index, alias_ops, options)
         end
 
+        def get_aliases(index, options={})
+          execute(:get_aliases, index, options)
+        end
+
         # options: ignore_conflicts
         def update_mapping(mapping, options={})
           index, type, options = extract_required_scope(options)
