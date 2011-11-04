@@ -121,6 +121,10 @@ module ElasticSearch
         standard_request(:post, {:op => "_aliases"}, {}, encoder.encode(operations))
       end
 
+      def get_aliases(index, options={})
+        standard_request(:get, {:index => index, :op => "_aliases"}, options)
+      end
+
       def update_mapping(index, type, mapping, options)
         standard_request(:put, {:index => index, :type => type, :op => "_mapping"}, options, encoder.encode(mapping))
       end
