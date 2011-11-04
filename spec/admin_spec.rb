@@ -22,4 +22,14 @@ describe "basic ops" do
     @client.update_settings("index" => {"refresh_interval" => 30})
     @client.get_settings(@first_index)[@first_index]["settings"].should include("index.refresh_interval" => "30")
   end
+
+  it "should get and update aliases" do
+    @client.alias_index(:add => { @first_index => "#{@first_index}-alias" })
+    result = @client.get_aliases(@first_index)
+    result[@first_index]["aliases"].keys.should include("#{@first_index}-alias")
+    @client.alias_index(:add => { @first_index => "#{@first_index}-alias2" }, :remove => { @first_index => "#{@first_index}-alias" })
+    result = @client.get_aliases(@first_index)
+    result[@first_index]["aliases"].keys.should_not include("#{@first_index}-alias")
+    result[@first_index]["aliases"].keys.should include("#{@first_index}-alias2")
+  end
 end
