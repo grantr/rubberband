@@ -16,11 +16,15 @@ describe "basic ops" do
 
     @client.update_mapping({"tweet" => {:properties => {:bar => {:type => "string"}}}})
     @client.index_mapping(@first_index).should == {@first_index => {"tweet" => { "properties" => { "foo" => {"type" => "string" }, "bar" => { "type" => "string"}}}}}
+    # default should also work
+    @client.index_mapping.should == {@first_index => {"tweet" => { "properties" => { "foo" => {"type" => "string" }, "bar" => { "type" => "string"}}}}}
   end
 
   it "should get and update settings" do
     @client.update_settings("index" => {"refresh_interval" => 30})
     @client.get_settings(@first_index)[@first_index]["settings"].should include("index.refresh_interval" => "30")
+    # default should also work
+    @client.get_settings[@first_index]["settings"].should include("index.refresh_interval" => "30")
   end
 
   it "should get and update aliases" do
@@ -29,6 +33,10 @@ describe "basic ops" do
     result[@first_index]["aliases"].keys.should include("#{@first_index}-alias")
     @client.alias_index(:add => { @first_index => "#{@first_index}-alias2" }, :remove => { @first_index => "#{@first_index}-alias" })
     result = @client.get_aliases(@first_index)
+    result[@first_index]["aliases"].keys.should_not include("#{@first_index}-alias")
+    result[@first_index]["aliases"].keys.should include("#{@first_index}-alias2")
+    # default should also work
+    result = @client.get_aliases
     result[@first_index]["aliases"].keys.should_not include("#{@first_index}-alias")
     result[@first_index]["aliases"].keys.should include("#{@first_index}-alias2")
   end
