@@ -1,3 +1,5 @@
+require 'uri'
+
 module ElasticSearch
   class AbstractClient
 
@@ -5,10 +7,29 @@ module ElasticSearch
       :transport => ElasticSearch::Transport::HTTP
     }.freeze
 
-    def initialize(servers, options={})
+    def initialize(servers_or_url, options={})
       @options = DEFAULTS.merge(options)
-      @server_list = Array(servers)
+      @server_list, @default_index, @default_type = extract_server_list_and_defaults(servers_or_url)
       @current_server = @server_list.first
+    end
+
+    def extract_server_list_and_defaults(servers_or_url)
+      default_index = default_type = nil
+      servers = Array(servers_or_url).collect do |server|
+        uri = URI.parse(server)
+        _, default_index, default_type = uri.path.split("/")
+        uri.path = "" # is this expected behavior of URI? may be dangerous to rely on
+        uri.to_s
+      end
+      [servers, default_index, default_type]
+    end
+
+    def current_server
+      @current_server
+    end
+
+    def servers
+      @server_list
     end
 
     def inspect
