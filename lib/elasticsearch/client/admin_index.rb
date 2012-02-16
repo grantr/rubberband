@@ -55,7 +55,8 @@ module ElasticSearch
           execute(:alias_index, alias_ops, options)
         end
 
-        def get_aliases(index, options={})
+        def get_aliases(index=default_index, options={})
+          index, type, options = extract_scope(options)
           execute(:get_aliases, index, options)
         end
 
@@ -83,7 +84,7 @@ module ElasticSearch
           execute(:update_settings, index, settings, options)
         end
 
-        def get_settings(index, options={})
+        def get_settings(index=default_index, options={})
           execute(:get_settings, index, options)
         end
 
