@@ -17,7 +17,15 @@ Copyright 2010-2011 Grant Rodgers. See included LICENSE file.
 
 Instantiate a client:
 
-  client = ElasticSearch.new('127.0.0.1:9200', :index => "twitter", :type => "tweet")
+    client = ElasticSearch.new('127.0.0.1:9200', :index => "twitter", :type => "tweet")
+
+Instantiate a client with multiple servers:
+  
+    client = ElasticSearch.new(['127.0.0.1:9200', '127.0.0.1:9201'])
+
+Instantiate a client using a Heroku URL (this sets the default index):
+
+    client = ElasticSearch.new(ENV['ELASTICSEARCH_URL'])
 
 API:
 
