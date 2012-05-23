@@ -14,6 +14,10 @@ Copyright 2010-2012 Grant Rodgers. See included LICENSE file.
 * Support for multiple transports (HTTP, Thrift, Memcached TODO)
 * Support for multiple encodings (JSON (Yajl), Smile TODO)
 
+## Supported Rubies
+
+Tested on 1.8.7, 1.9.2, 1.9.3, and Rubinius in 1.8 and 1.9 mode.
+
 ## Usage
 
 Instantiate a client:
