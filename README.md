@@ -1,20 +1,20 @@
 
-= RubberBand
+# RubberBand
 [![Build Status](https://secure.travis-ci.org/grantr/rubberband.png?branch=master)](http://travis-ci.org/grantr/rubberband)
 
 An ElasticSearch client with ThriftClient-like failover handling.
 
-== License
+## License
 
 Copyright 2010-2012 Grant Rodgers. See included LICENSE file.
 
-== Features
+## Features
 
 * Automatic failover, retry, and peer discovery
 * Support for multiple transports (HTTP, Thrift, Memcached TODO)
 * Support for multiple encodings (JSON (Yajl), Smile TODO)
 
-== Usage
+## Usage
 
 Instantiate a client:
 
@@ -34,11 +34,11 @@ API:
   client.get("1")
   client.search("body:elasticsearch")
 
-== TODO
+## TODO
 
 See TODO file.
 
-== Contributing
+## Contributing
 
 http://github.com/grantr/rubberband
 
