@@ -1,4 +1,4 @@
-if RUBY_VERSION =~ /^1\.9/
+if RUBY_VERSION =~ /^1\.9/ && RUBY_ENGINE == "ruby" # don't run coverage on rbx
   require 'simplecov'
   SimpleCov.start do
     add_filter '/spec/'
