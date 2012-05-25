@@ -1,4 +1,3 @@
-
 # RubberBand
 [![Build Status](https://secure.travis-ci.org/grantr/rubberband.png?branch=master)](http://travis-ci.org/grantr/rubberband)
 
@@ -22,7 +21,7 @@ Tested on 1.8.7, 1.9.2, 1.9.3, and Rubinius in 1.8 and 1.9 mode.
 
 Instantiate a client:
 
-    client = ElasticSearch.new('127.0.0.1:9200', :index => "twitter", :type => "tweet")
+    client = ElasticSearch.new('http://127.0.0.1:9200', :index => "twitter", :type => "tweet")
 
 Instantiate a client with multiple servers:
   
