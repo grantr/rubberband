@@ -32,11 +32,11 @@ Instantiate a client using a Heroku URL (this sets the default index):
     client = ElasticSearch.new(ENV['ELASTICSEARCH_URL'])
 
 API:
-
-  client.index({:body => "elasticsearch is cool"}, :id => 1)
-  client.get("1")
-  client.search("body:elasticsearch")
-
+```ruby
+  client.index({:body => "elasticsearch is cool"}, :id => 1)  
+  client.get("1")  
+  client.search("body:elasticsearch")  
+```
 ## TODO
 
 See TODO file.
