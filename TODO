@@ -1,7 +1,5 @@
-delete_by_query
 terms
 more_like_this
-bulk ops
 test scroll better, maybe add a scroller object
 handle partial failure cases where some shards are unsuccessful (optionally raise a PartialResult exception, allow override option to return results anyway. results should have a flag that signifies incompleteness)
 tests/specs/features
