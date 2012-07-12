@@ -7,7 +7,7 @@ module ElasticSearch
       :transport => ElasticSearch::Transport::HTTP
     }.freeze
 
-    attr_accessor :current_server
+    attr_accessor :current_server, :connection
 
     def initialize(servers_or_url, options={}, &block)
       @options = DEFAULTS.merge(options)
