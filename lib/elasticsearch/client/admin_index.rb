@@ -5,16 +5,12 @@ module ElasticSearch
         PSEUDO_INDICES = [:all]
 
         def index_status(*args)
-          options = args.last.is_a?(Hash) ? args.pop : {}
-          indices = args.empty? ? [(default_index || :all)] : args.flatten
-          indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+          indices, options = extract_indices_and_options(args)
           execute(:index_status, indices, options)
         end
 
         def index_mapping(*args)
-          options = args.last.is_a?(Hash) ? args.pop : {}
-          indices = args.empty? ? [(default_index || :all)] : args.flatten
-          indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+          indices, options = extract_indices_and_options(args)
           execute(:index_mapping, indices, options)
         end
 
@@ -92,9 +88,7 @@ module ElasticSearch
         # options: refresh
         # default: default_index if defined, otherwise :all
         def flush(*args)
-          options = args.last.is_a?(Hash) ? args.pop : {}
-          indices = args.empty? ? [(default_index || :all)] : args.flatten
-          indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+          indices, options = extract_indices_and_options(args)
           execute(:flush, indices, options)
         end
 
@@ -102,9 +96,7 @@ module ElasticSearch
         # no options
         # default: default_index if defined, otherwise all
         def refresh(*args)
-          options = args.last.is_a?(Hash) ? args.pop : {}
-          indices = args.empty? ? [(default_index || :all)] : args.flatten
-          indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+          indices, options = extract_indices_and_options(args)
           execute(:refresh, indices, options)
         end
 
@@ -112,9 +104,7 @@ module ElasticSearch
         # no options
         # default: default_index if defined, otherwise all
         def snapshot(*args)
-          options = args.last.is_a?(Hash) ? args.pop : {}
-          indices = args.empty? ? [(default_index || :all)] : args.flatten
-          indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+          indices, options = extract_indices_and_options(args)
           execute(:snapshot, indices, options)
         end
 
@@ -122,9 +112,7 @@ module ElasticSearch
         # options: max_num_segments, only_expunge_deletes, refresh, flush
         # default: default_index if defined, otherwise all
         def optimize(*args)
-          options = args.last.is_a?(Hash) ? args.pop : {}
-          indices = args.empty? ? [(default_index || :all)] : args.flatten
-          indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+          indices, options = extract_indices_and_options(args)
           execute(:optimize, indices, options)
         end
 
@@ -142,6 +130,14 @@ module ElasticSearch
 
         def delete_river(type=nil, options={})
           execute(:delete_river, type, options)
+        end
+
+        private
+        def extract_indices_and_options(args)
+          options = args.last.is_a?(Hash) ? args.pop : {}
+          indices = args.empty? ? [(default_index || :all)] : args.flatten
+          indices.collect! { |i| PSEUDO_INDICES.include?(i) ? "_#{i}" : i }
+          [indices, options]
         end
       end
     end
