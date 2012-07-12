@@ -7,7 +7,9 @@ module ElasticSearch
       :transport => ElasticSearch::Transport::HTTP
     }.freeze
 
-    def initialize(servers_or_url, options={})
+    attr_accessor :current_server
+
+    def initialize(servers_or_url, options={}, &block)
       @options = DEFAULTS.merge(options)
       @server_list, @default_index, @default_type = extract_server_list_and_defaults(servers_or_url)
       @current_server = @server_list.first
@@ -26,10 +28,6 @@ module ElasticSearch
         end
       end
       [servers, default_index, default_type]
-    end
-
-    def current_server
-      @current_server
     end
 
     def servers
