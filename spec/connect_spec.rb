@@ -71,13 +71,13 @@ describe "connect" do
     let(:servers) { '127.0.0.1:9500' }
 
     it 'should take an alternate transport class' do
-      client = ElasticSearch.new(servers, :auto_discovery => false, :transport => ElasticSearch::Transport::Thrift)
+      client = ElasticSearch.new(servers, :auto_discovery => false, :transport => DummyTransport)
       client.connect!
-      client.connection.should be_an_instance_of(ElasticSearch::Transport::Thrift)
+      client.connection.should be_an_instance_of(DummyTransport)
     end
 
     it 'should take a transport object' do
-      transport = ElasticSearch::Transport::Thrift.new(servers)
+      transport = DummyTransport.new(servers)
       client = ElasticSearch.new(servers, :auto_discovery => false, :transport => transport)
       client.connect!
       client.connection.should be(transport)
@@ -88,17 +88,6 @@ describe "connect" do
     let(:server) { '127.0.0.1:9200' }
 
     it 'should pass the block to the transport' do
-      DummyTransport = Class.new do
-        attr_accessor :block
-
-        def initialize(server, options, &block)
-          @block = block
-        end
-
-        def connect!
-        end
-      end
-
       client = ElasticSearch.new(server, :auto_discovery => false, :transport => DummyTransport) do
         'hi there'
       end
