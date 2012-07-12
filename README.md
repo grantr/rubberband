@@ -10,8 +10,12 @@ Copyright 2010-2012 Grant Rodgers. See included LICENSE file.
 ## Features
 
 * Automatic failover, retry, and peer discovery
-* Support for multiple transports (HTTP, Thrift, Memcached TODO)
-* Support for multiple encodings (JSON (Yajl), Smile TODO)
+* Support for multiple transports (HTTP, Thrift, Memcached)
+* Support for multiple encodings (JSON, Smile TODO)
+
+Rubberband uses MultiJson for JSON encoding and decoding and supports all JSON backends that MultiJson supports.
+
+The HTTP transport uses Faraday, which also supports a number of http backends. Choose the one that works best for you.
 
 ## Supported Rubies
 
