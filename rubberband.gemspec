@@ -30,7 +30,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "multi_json"
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec", ["~> 2.0"]
-  s.add_development_dependency "yard", [">= 0.7.0"]
   s.add_development_dependency "simplecov", [">= 0.3.8"]
   s.add_development_dependency "mocha", ["~> 0.9.0"]
 
