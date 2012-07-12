@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
 
   s.extra_rdoc_files = [
     "LICENSE",
-    "README.rdoc"
+    "README.md"
   ]
   s.licenses = ["Apache v2"]
 
