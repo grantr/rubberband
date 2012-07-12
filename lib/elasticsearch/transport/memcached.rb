@@ -60,7 +60,7 @@ module ElasticSearch
         rescue Exception => e
           case e
           when TimeoutError
-            raise TimeoutError
+            raise TimeoutError, $!
           else
             raise e
           end

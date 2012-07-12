@@ -95,9 +95,9 @@ module ElasticSearch
           when ::Thrift::TransportException
             case e.type
             when ::Thrift::TransportException::TIMED_OUT
-              raise TimeoutError
+              raise TimeoutError, $!
             else
-              raise ConnectionFailed
+              raise ConnectionFailed, $!
             end
           #TODO Thrift::ApplicationException, Thrift::ProtocolException, IOError.. retryable or fatal?
           else
