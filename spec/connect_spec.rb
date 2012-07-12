@@ -1,6 +1,14 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "connect" do
+  context 'ip and port only' do
+    let(:servers) { '127.0.0.1:9200' }
+
+    it 'should connect' do
+      client = ElasticSearch.new(servers)
+      client.nodes_info.should include('cluster_name')
+    end
+  end
 
   context 'one server' do
     let(:servers) { 'http://127.0.0.1:9200' }

@@ -16,10 +16,14 @@ module ElasticSearch
     def extract_server_list_and_defaults(servers_or_url)
       default_index = default_type = nil
       servers = Array(servers_or_url).collect do |server|
-        uri = URI.parse(server)
-        _, default_index, default_type = uri.path.split("/")
-        uri.path = "" # is this expected behavior of URI? may be dangerous to rely on
-        uri.to_s
+        begin
+          uri = URI.parse(server)
+          _, default_index, default_type = uri.path.split("/")
+          uri.path = "" # is this expected behavior of URI? may be dangerous to rely on
+          uri.to_s
+        rescue URI::InvalidURIError
+          server
+        end
       end
       [servers, default_index, default_type]
     end
