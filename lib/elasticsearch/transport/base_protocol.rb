@@ -44,8 +44,8 @@ module ElasticSearch
 
       def search(index, type, query, options={})
         if query.is_a?(Hash)
-          # patron cannot submit get requests with content, so if query is a hash, post it instead (assume a query hash is using the query dsl)
-          response = request(:post, {:index => index, :type => type, :op => "_search"}, options, encoder.encode(query))
+          # Some http libraries cannot submit get requests with content, so if query is a hash, post it instead (assume a query hash is using the query dsl)
+          response = request(:get, {:index => index, :type => type, :op => "_search"}, options, encoder.encode(query))
         else
           response = request(:get, {:index => index, :type => type, :op => "_search"}, options.merge(:q => query))
         end
@@ -60,7 +60,7 @@ module ElasticSearch
       end
 
       def scroll(scroll_id, options={})
-        # patron cannot submit get requests with content, so we pass the scroll_id in the parameters
+        # Some http libraries cannot submit get requests with content, so we pass the scroll_id in the parameters
         response = request(:get, {:op => "_search/scroll"}, options.merge(:scroll_id => scroll_id))
         handle_error(response) unless response.status == 200
         results = encoder.decode(response.body)
@@ -74,7 +74,7 @@ module ElasticSearch
 
       def count(index, type, query, options={})
         if query.is_a?(Hash)
-          # patron cannot submit get requests with content, so if query is a hash, post it instead (assume a query hash is using the query dsl)
+          # Some http libraries cannot submit get requests with content, so if query is a hash, post it instead (assume a query hash is using the query dsl)
           response = request(:post, {:index => index, :type => type, :op => "_count"}, options, encoder.encode(query))
         else
           response = request(:get, {:index => index, :type => type, :op => "_count"}, options.merge(:q => query))
