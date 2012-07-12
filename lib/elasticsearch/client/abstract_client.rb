@@ -7,17 +7,17 @@ module ElasticSearch
       :transport => ElasticSearch::Transport::HTTP
     }.freeze
 
-    attr_accessor :current_server, :connection
+    attr_accessor :servers, :current_server, :connection
 
     def initialize(servers_or_url, options={}, &block)
       @options = DEFAULTS.merge(options)
-      @server_list, @default_index, @default_type = extract_server_list_and_defaults(servers_or_url)
-      @current_server = @server_list.first
+      @servers, @default_index, @default_type = extract_servers_and_defaults(servers_or_url)
+      @current_server = @servers.first
     end
 
-    def extract_server_list_and_defaults(servers_or_url)
+    def extract_servers_and_defaults(servers_or_url)
       default_index = default_type = nil
-      servers = Array(servers_or_url).collect do |server|
+      given_servers = Array(servers_or_url).collect do |server|
         begin
           uri = URI.parse(server)
           _, default_index, default_type = uri.path.split("/")
@@ -27,11 +27,7 @@ module ElasticSearch
           server
         end
       end
-      [servers, default_index, default_type]
-    end
-
-    def servers
-      @server_list
+      [given_servers, default_index, default_type]
     end
 
     def inspect

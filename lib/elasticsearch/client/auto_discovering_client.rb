@@ -5,7 +5,7 @@ module ElasticSearch
       :auto_discovery => true
     }.freeze
 
-    def initialize(servers, options={})
+    def initialize(servers_or_url, options={})
       super
       @options = AUTO_DISCOVERING_DEFAULTS.merge(@options)
       if @options[:auto_discovery]
@@ -15,7 +15,7 @@ module ElasticSearch
 
     #TODO how to autodiscover on reconnect? don't want to overwrite methods of RetryingClient
     def auto_discover_nodes!
-      @server_list = execute(:all_nodes)
+      @servers = execute(:all_nodes)
     end
   end
 end

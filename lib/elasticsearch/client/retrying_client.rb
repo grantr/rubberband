@@ -14,10 +14,10 @@ module ElasticSearch
     }.freeze
 
     # use cluster status to get server list
-    def initialize(servers, options={})
+    def initialize(servers_or_url, options={})
       super
       @options = RETRYING_DEFAULTS.merge(@options)
-      @retries = options[:retries] || @server_list.size
+      @retries = options[:retries] || @servers.size
       @request_count = 0
       @max_requests = @options[:server_max_requests]
       @retry_period = @options[:server_retry_period]
@@ -46,7 +46,7 @@ module ElasticSearch
     def next_server
       if @retry_period
         rebuild_live_server_list! if Time.now > @last_rebuild + @retry_period
-        raise NoServersAvailable, "No live servers in #{@server_list.inspect} since #{@last_rebuild.inspect}." if @live_server_list.empty?
+        raise NoServersAvailable, "No live servers in #{@servers.inspect} since #{@last_rebuild.inspect}." if @live_server_list.empty?
       elsif @live_server_list.empty?
         rebuild_live_server_list!
       end
@@ -56,9 +56,9 @@ module ElasticSearch
     def rebuild_live_server_list!
       @last_rebuild = Time.now
       if @options[:randomize_server_list]
-        @live_server_list = @server_list.sort_by { rand }
+        @live_server_list = @servers.sort_by { rand }
       else
-        @live_server_list = @server_list.dup
+        @live_server_list = @servers.dup
       end
     end
 
