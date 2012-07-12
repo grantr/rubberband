@@ -35,6 +35,15 @@ Connect using the thrift transport (requires the thrift gem and elasticsearch th
 
     client = ElasticSearch.new('127.0.0.1:9500', :transport => ElasticSearch::Transport::Thrift)
 
+Pass a block to Faraday to configure middleware and options:
+
+```ruby
+  client = ElasticSearch::Client.new('127.0.0.1:9200') do |conn|
+    conn.response :logger
+    conn.adapter Faraday.default_adapter
+  end
+```
+
 API:
 ```ruby
   client.index({:body => "elasticsearch is cool"}, :id => 1)  
