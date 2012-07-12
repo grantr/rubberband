@@ -1,3 +1,5 @@
+require 'faraday'
+
 module ElasticSearch
   module Transport
     module IndexProtocol
@@ -248,17 +250,12 @@ module ElasticSearch
         nil
       end
 
-      # faster than CGI.escape
-      # stolen from RSolr, who stole it from Rack
       def escape(string)
-        string.to_s.gsub(/([^ a-zA-Z0-9_.-]+)/n) {
-          #'%'+$1.unpack('H2'*$1.size).join('%').upcase
-          '%'+$1.unpack('H2'*bytesize($1)).join('%').upcase
-        }.tr(' ', '+')
+        Faraday::Utils.escape(string)
       end
 
       def unescape(string)
-        CGI.unescape(string)
+        Faraday::Utils.unescape(string)
       end
 
       if ''.respond_to?(:force_encoding) && ''.respond_to?(:encoding)
@@ -271,18 +268,6 @@ module ElasticSearch
         # returns the unaltered string in Ruby 1.8
         def encode_utf8(string)
           string
-        end
-      end
-
-      # Return the bytesize of String; uses String#size under Ruby 1.8 and
-      # String#bytesize under 1.9.
-      if ''.respond_to?(:bytesize)
-        def bytesize(string)
-          string.bytesize
-        end
-      else
-        def bytesize(string)
-          string.size
         end
       end
     end

@@ -81,4 +81,14 @@ describe "index ops" do
       { "id" => "3", "fields" => { "foo" => "bazbar" }, "_source" => nil },
     ]
   end
+
+  it 'should handle html escaping and unescaping' do
+    @client.index({'fo/o' => 'ba=r'}, :id => "1'")
+    @client.refresh
+    
+    results = @client.search({:query => { :field => { 'fo/o' => 'ba=r' }}})
+    results.should have(1).item
+    results.first.id.should == "1'"
+    results.first._source.should == {'fo/o' => 'ba=r'}
+  end
 end

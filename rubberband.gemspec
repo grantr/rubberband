@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.licenses = ["Apache v2"]
 
   s.add_runtime_dependency "patron", ["~> 0.4.12"]
+  s.add_runtime_dependency "faraday"
   s.add_runtime_dependency "multi_json"
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec", ["~> 2.0"]

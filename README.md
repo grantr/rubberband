@@ -15,7 +15,7 @@ Copyright 2010-2012 Grant Rodgers. See included LICENSE file.
 
 ## Supported Rubies
 
-Tested on 1.8.7, 1.9.2, 1.9.3, and Rubinius in 1.8 and 1.9 mode.
+Tested on 1.8.7, 1.9.2, 1.9.3, and Rubinius in 1.8 and 1.9 mode. Ruby 1.8.6 is NOT supported due to missing String#bytesize.
 
 ## Usage
 
