@@ -13,6 +13,7 @@ module ElasticSearch
       @options = DEFAULTS.merge(options)
       @servers, @default_index, @default_type = extract_servers_and_defaults(servers_or_url)
       @current_server = @servers.first
+      @connect_block = block
     end
 
     def extract_servers_and_defaults(servers_or_url)
@@ -32,7 +33,11 @@ module ElasticSearch
 
     def connect!
       if @options[:transport].is_a?(Class)
-        @connection = @options[:transport].new(@current_server, @options)
+        if @connect_block
+          @connection = @options[:transport].new(@current_server, @options, &@connect_block)
+        else
+          @connection = @options[:transport].new(@current_server, @options)
+        end
       else
         @connection = @options[:transport]
       end

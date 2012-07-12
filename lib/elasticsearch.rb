@@ -8,7 +8,7 @@ require 'client'
 
 module ElasticSearch
 
-  def self.new(servers_or_url, options={})
-    ElasticSearch::Client.new(servers_or_url, options)
+  def self.new(servers_or_url, options={}, &block)
+    ElasticSearch::Client.new(servers_or_url, options, &block)
   end
 end

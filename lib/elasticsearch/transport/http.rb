@@ -9,9 +9,12 @@ module ElasticSearch
         :protocol => 'http'
       }.freeze
 
-      def initialize(server, options={})
+      attr_accessor :session
+
+      def initialize(server, options={}, &block)
         super
         @options = DEFAULTS.merge(@options)
+        @connect_block = block if block_given?
 
         # Make sure the server starts with a URI scheme.
         unless @server =~ /^(([^:\/?#]+):)?\/\//
@@ -20,7 +23,11 @@ module ElasticSearch
       end
 
       def connect!
-        @session = Faraday.new :url => @server, :headers => {'User-Agent' => 'ElasticSearch.rb v0.1'}
+        if @connect_block
+          @session = Faraday.new :url => @server, :headers => {'User-Agent' => 'ElasticSearch.rb v0.1'}, &@connect_block
+        else
+          @session = Faraday.new :url => @server, :headers => {'User-Agent' => 'ElasticSearch.rb v0.1'}
+        end
         @session.options[:timeout] = @options[:timeout]
       end
 

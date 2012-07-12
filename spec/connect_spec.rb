@@ -83,4 +83,28 @@ describe "connect" do
       client.connection.should be(transport)
     end
   end
+
+  context 'with block' do
+    let(:server) { '127.0.0.1:9200' }
+
+    it 'should pass the block to the transport' do
+      DummyTransport = Class.new do
+        attr_accessor :block
+
+        def initialize(server, options, &block)
+          @block = block
+        end
+
+        def connect!
+        end
+      end
+
+      client = ElasticSearch.new(server, :auto_discovery => false, :transport => DummyTransport) do
+        'hi there'
+      end
+      client.connect!
+
+      client.connection.block.call.should == 'hi there'
+    end
+  end
 end
