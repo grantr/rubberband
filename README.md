@@ -31,6 +31,10 @@ Instantiate a client using a Heroku URL (this sets the default index):
 
     client = ElasticSearch.new(ENV['ELASTICSEARCH_URL'])
 
+Connect using the thrift transport (requires the thrift gem and elasticsearch thrift plugin to be installed):
+
+    client = ElasticSearch.new('127.0.0.1:9500', :transport => ElasticSearch::Transport::Thrift)
+
 API:
 ```ruby
   client.index({:body => "elasticsearch is cool"}, :id => 1)  
