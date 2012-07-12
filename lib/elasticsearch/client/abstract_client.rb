@@ -31,7 +31,11 @@ module ElasticSearch
     end
 
     def connect!
-      @connection = @options[:transport].new(@current_server, @options)
+      if @options[:transport].is_a?(Class)
+        @connection = @options[:transport].new(@current_server, @options)
+      else
+        @connection = @options[:transport]
+      end
       @connection.connect!
     end
 

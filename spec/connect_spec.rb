@@ -66,4 +66,21 @@ describe "connect" do
       client.default_type.should == 'test_type'
     end
   end
+
+  context 'alternate transport' do
+    let(:servers) { '127.0.0.1:9500' }
+
+    it 'should take an alternate transport class' do
+      client = ElasticSearch.new(servers, :auto_discovery => false, :transport => ElasticSearch::Transport::Thrift)
+      client.connect!
+      client.connection.should be_an_instance_of(ElasticSearch::Transport::Thrift)
+    end
+
+    it 'should take a transport object' do
+      transport = ElasticSearch::Transport::Thrift.new(servers)
+      client = ElasticSearch.new(servers, :auto_discovery => false, :transport => transport)
+      client.connect!
+      client.connection.should be(transport)
+    end
+  end
 end
