@@ -1,5 +1,4 @@
-require 'patron'
-require 'cgi'
+require 'faraday'
 
 module ElasticSearch
   module Transport
@@ -21,10 +20,8 @@ module ElasticSearch
       end
 
       def connect!
-        @session = Patron::Session.new
-        @session.base_url = @server
-        @session.timeout = @options[:timeout]
-        @session.headers['User-Agent'] = 'ElasticSearch.rb v0.1'
+        @session = Faraday.new :url => @server, :headers => {'User-Agent' => 'ElasticSearch.rb v0.1'}
+        @session.options[:timeout] = @options[:timeout]
       end
 
       def all_nodes
@@ -41,21 +38,20 @@ module ElasticSearch
 
       def request(method, operation, params={}, body=nil, headers={})
         begin
-          uri = generate_uri(operation)
-          query = generate_query_string(params)
-          path = [uri, query].join("?")
-          #puts "request: #{method} #{@server} #{path} #{body}"
-          response = @session.request(method, path, headers, :data => body)
+          response = @session.send(method, generate_uri(operation)) do |req|
+            req.headers = headers
+            req.params = params
+            req.body = body
+          end
+          # handle all 500 statuses here, other statuses are protocol-specific
           handle_error(response) if response.status >= 500
           response
         rescue Exception => e
           case e
-          when Patron::ConnectionFailed
-            raise ConnectionFailed
-          when Patron::HostResolutionError
-            raise HostResolutionError
-          when Patron::TimeoutError
-            raise TimeoutError
+          when Faraday::Error::ConnectionFailed
+            raise ConnectionFailed, $!
+          when Faraday::Error::TimeoutError
+            raise TimeoutError, $!
           else
             raise e
           end
