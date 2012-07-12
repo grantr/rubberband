@@ -30,10 +30,6 @@ module ElasticSearch
       [given_servers, default_index, default_type]
     end
 
-    def inspect
-      "<#{self.class} @current_server=#{@current_server} @server_list=#{@server_list.inspect} @options=#{@options.inspect}>"
-    end
-
     def connect!
       @connection = @options[:transport].new(@current_server, @options)
       @connection.connect!
