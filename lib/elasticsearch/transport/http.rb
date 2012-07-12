@@ -24,9 +24,9 @@ module ElasticSearch
 
       def connect!
         if @connect_block
-          @session = Faraday.new :url => @server, :headers => {'User-Agent' => 'ElasticSearch.rb v0.1'}, &@connect_block
+          @session = Faraday.new :url => @server, :headers => {'User-Agent' => 'Rubberband'}, &@connect_block
         else
-          @session = Faraday.new :url => @server, :headers => {'User-Agent' => 'ElasticSearch.rb v0.1'}
+          @session = Faraday.new :url => @server, :headers => {'User-Agent' => 'Rubberband'}
         end
         @session.options[:timeout] = @options[:timeout]
       end
