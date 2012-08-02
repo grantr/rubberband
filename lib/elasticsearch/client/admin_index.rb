@@ -51,9 +51,9 @@ module ElasticSearch
           execute(:alias_index, alias_ops, options)
         end
 
-        def get_aliases(index=default_index, options={})
-          index, type, options = extract_scope(options)
-          execute(:get_aliases, index, options)
+        def get_aliases(index=nil, options={})
+          scope_index, type, options = extract_scope(options)
+          execute(:get_aliases, index || scope_index, options)
         end
 
         # options: ignore_conflicts

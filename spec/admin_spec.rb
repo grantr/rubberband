@@ -40,4 +40,12 @@ describe "basic ops" do
     result[@first_index]["aliases"].keys.should_not include("#{@first_index}-alias")
     result[@first_index]["aliases"].keys.should include("#{@first_index}-alias2")
   end
+
+  it 'should get aliases for non-default index' do
+    second_index = 'second-' + Time.now.to_i.to_s
+    @client.create_index(second_index)
+    @client.alias_index(:add => { second_index => "#{second_index}-alias" })
+    result = @client.get_aliases(second_index)
+    result[second_index]["aliases"].keys.should include("#{second_index}-alias")
+  end
 end
