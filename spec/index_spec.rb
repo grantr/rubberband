@@ -30,6 +30,8 @@ describe "index ops" do
 
     @client.search(:query => { :term => { :foo => 'baz' }}).should have(2).items
     @client.count(:term => { :foo => 'baz' }).should == 2
+
+    @client.search(:size => 1, :query => { :term => { :foo => 'baz' }}).should have(1).items
   end
 
   it 'should return ids when given :ids_only' do

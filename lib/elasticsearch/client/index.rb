@@ -72,7 +72,7 @@ module ElasticSearch
       def search(query, options={})
         index, type, options = extract_scope(options)
 
-        options[:size] ||= (options[:per_page] || options[:limit] || 10)
+        options[:size] ||= (options[:per_page] || options[:limit]) if options[:per_page] || options[:limit]
         options[:from] ||= options[:size] * (options[:page].to_i-1) if options[:page] && options[:page].to_i > 1
         options[:from] ||= options[:offset] if options[:offset]
 
