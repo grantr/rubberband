@@ -21,6 +21,7 @@ module ElasticSearch
       given_servers = Array(servers_or_url).collect do |server|
         begin
           uri = URI.parse(server)
+          raise URI::InvalidURIError, server if uri.path.nil?
           _, default_index, default_type = uri.path.split("/")
           uri.path = "" # is this expected behavior of URI? may be dangerous to rely on
           uri.to_s
