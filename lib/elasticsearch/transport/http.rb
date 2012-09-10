@@ -55,7 +55,7 @@ module ElasticSearch
           response
         rescue Exception => e
           case e
-          when Faraday::Error::ConnectionFailed
+          when Faraday::Error::ConnectionFailed, Errno::EHOSTUNREACH
             raise ConnectionFailed, $!
           when Faraday::Error::TimeoutError
             raise TimeoutError, $!

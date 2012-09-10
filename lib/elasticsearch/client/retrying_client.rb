@@ -18,6 +18,8 @@ module ElasticSearch
       super
       @options = RETRYING_DEFAULTS.merge(@options)
       @retries = options[:retries] || @servers.size
+      @connect_retries_count = 0
+      @execute_retries_count = 0
       @request_count = 0
       @max_requests = @options[:server_max_requests]
       @retry_period = @options[:server_retry_period]
@@ -26,8 +28,11 @@ module ElasticSearch
 
     def connect!
       @current_server = next_server
-      super
-    rescue ElasticSearch::RetryableError
+      clear_connect_retries_count_after do
+        super
+      end
+    rescue ElasticSearch::RetryableError => exception
+      increment_or_raise_on_connect_retry( exception )
       retry
     end
 
@@ -50,7 +55,7 @@ module ElasticSearch
       elsif @live_server_list.empty?
         rebuild_live_server_list!
       end
-      @live_server_list.pop
+      @live_server_list.shift
     end
 
     def rebuild_live_server_list!
@@ -66,9 +71,12 @@ module ElasticSearch
       disconnect_on_max! if @max_requests and @request_count >= @max_requests
       @request_count += 1
       begin
-        super
-      rescue ElasticSearch::RetryableError
+        clear_execute_retries_count_after do
+          super
+        end
+      rescue ElasticSearch::RetryableError => exception
         disconnect!
+        increment_or_raise_on_execute_retry( exception )
         retry
       end
     end
@@ -77,5 +85,41 @@ module ElasticSearch
       @live_server_list.push(@current_server)
       disconnect!
     end
+
+    protected
+
+    def clear_connect_retries_count_after
+      result = yield
+      @connect_retries_count = 0
+      result
+    end
+
+    def clear_execute_retries_count_after
+      result = yield
+      @execute_retries_count = 0
+      @connect_retries_count = 0
+      result
+    end
+
+    def increment_or_raise_on_connect_retry( exception )
+      if @retries <= @connect_retries_count
+        @connect_retries_count = 0
+        @execute_retries_count = 0
+        raise exception
+      else
+        @connect_retries_count += 1
+      end
+    end
+
+    def increment_or_raise_on_execute_retry( exception )
+      if @retries <= @execute_retries_count
+        @execute_retries_count = 0
+        @connect_retries_count = 0
+        raise exception
+      else
+        @execute_retries_count += 1
+      end
+    end
+
   end
 end
