@@ -228,7 +228,7 @@ module ElasticSearch
       def generate_uri(options)
         path = ""
         path << "/#{Array(options[:index]).collect { |i| escape(i.downcase) }.join(",")}" if options[:index] && !options[:index].empty?
-        path << "/_all" if options[:index] && options[:index].empty?
+        path << "/*" if options[:index] && options[:index].empty?
         path << "/#{Array(options[:type]).collect { |t| escape(t) }.join(",")}" if options[:type] && !options[:type].empty?
         path << "/#{Array(options[:id]).collect { |id| escape(id) }.join(",")}" if options[:id] && !options[:id].to_s.empty?
         path << "/#{options[:op]}" if options[:op]
