@@ -50,6 +50,8 @@ Pass a block to Faraday to configure middleware and options:
 
 API:
 ```ruby
+  client.default_index = "test_index"
+  client.default_type  = "test_type"
   client.index({:body => "elasticsearch is cool"}, :id => 1)  
   client.get("1")  
   client.search("body:elasticsearch")  
