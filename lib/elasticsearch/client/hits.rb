@@ -37,6 +37,11 @@ module ElasticSearch
       def total_pages
         (total_entries / per_page.to_f).ceil
       end
+
+      def offset
+        per_page * (current_page - 1)
+      end
+
       alias_method :page_count, :total_pages
     end
 

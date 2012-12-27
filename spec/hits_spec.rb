@@ -63,5 +63,6 @@ describe ElasticSearch::Api::Hits do
     its(:previous_page) { should == (page - 1) }
     its(:current_page) { should == page }
     its(:per_page) { should == per_page }
+    its(:offset) { should == per_page * (page - 1) }
   end
 end
