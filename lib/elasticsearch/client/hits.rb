@@ -43,12 +43,18 @@ module ElasticSearch
       end
 
       alias_method :page_count, :total_pages
+
+      # Kaminari support
+      alias_method :limit_value,  :per_page
+      alias_method :num_pages,    :total_pages
+      alias_method :offset_value, :offset
     end
 
 
     class Hits
       include Pagination
       attr_reader :hits, :total_entries, :_shards, :response, :facets, :scroll_id
+      alias_method :total_count, :total_entries
 
       def initialize(response, options={})
         @response = response
