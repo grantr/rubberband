@@ -27,7 +27,8 @@ describe ElasticSearch::Api::Hits do
 
     it { should respond_to(:response) }
 
-    its(:total_entries) { should == response["hits"]["hits"].size }
+    its(:total_entries) { should == response["hits"]["hits"].size } # will_paginate
+    its(:total_count) { should == response["hits"]["hits"].size } # kaminari
 
     it "should instantiate hits in order" do
       response["hits"]["hits"].each_with_index do |hit, i|
@@ -58,10 +59,17 @@ describe ElasticSearch::Api::Hits do
     
     subject { described_class.new(response, {:page => page, :per_page => per_page}) }
 
+    # will_paginate
     its(:total_pages) { should == (response["hits"]["total"] / per_page.to_f).ceil }
     its(:next_page) { should == (page + 1) }
     its(:previous_page) { should == (page - 1) }
     its(:current_page) { should == page }
     its(:per_page) { should == per_page }
+    its(:offset) { should == per_page * (page - 1) }
+
+    # kaminari
+    its(:limit_value) { should == per_page }
+    its(:num_pages) { should == (response["hits"]["total"] / per_page.to_f).ceil }
+    its(:offset_value) { should == per_page * (page - 1) }
   end
 end
