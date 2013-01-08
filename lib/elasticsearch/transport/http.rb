@@ -24,9 +24,9 @@ module ElasticSearch
 
       def connect!
         if @connect_block
-          @session = Faraday.new :url => @server, :headers => {'User-Agent' => 'Rubberband'}, &@connect_block
+          @session = Faraday.new :url => @server, &@connect_block
         else
-          @session = Faraday.new :url => @server, :headers => {'User-Agent' => 'Rubberband'}
+          @session = Faraday.new :url => @server
         end
         @session.options[:timeout] = @options[:timeout]
       end
@@ -43,10 +43,9 @@ module ElasticSearch
 
       private
 
-      def request(method, operation, params={}, body=nil, headers={})
+      def request(method, operation, params={}, body=nil)
         begin
           response = @session.send(method, generate_uri(operation)) do |req|
-            req.headers = headers
             req.params = params
             req.body = body
           end

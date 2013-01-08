@@ -67,7 +67,7 @@ module ElasticSearch
         hash
       end
 
-      def request(method, operation, params={}, body=nil, headers={})
+      def request(method, operation, params={}, body=nil)
         begin
           uri = generate_uri(operation)
           #puts "request: #{@server} #{method} #{uri} #{params.inspect} #{body}"
@@ -86,7 +86,6 @@ module ElasticSearch
           request.uri = uri
           request.parameters = stringify!(params)
           request.body = body
-          request.headers = stringify!(headers)
           response = @client.execute(request)
           handle_error(response) if response.status >= 500
           response

@@ -33,7 +33,7 @@ module ElasticSearch
         raise NotImplementedError
       end
 
-      def request(method, operation, params={}, body=nil, headers={})
+      def request(method, operation, params={}, body=nil)
         raise NotImplementedError
       end
     end

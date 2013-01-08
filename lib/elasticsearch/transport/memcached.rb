@@ -38,7 +38,7 @@ module ElasticSearch
 
       private
 
-      def request(method, operation, params={}, body=nil, headers={})
+      def request(method, operation, params={}, body=nil)
         begin
           uri = generate_uri(operation)
           query = generate_query_string(params)
