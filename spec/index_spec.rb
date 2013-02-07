@@ -3,11 +3,13 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe "index ops" do
   before(:all) do
     @first_index = 'first-' + Time.now.to_i.to_s
+    @second_index = 'second-' + Time.now.to_i.to_s
     @client = ElasticSearch.new('http://127.0.0.1:9200', :index => @first_index, :type => "tweet")
   end
 
   after(:all) do
     @client.delete_index(@first_index)
+    @client.delete_index(@second_index)
     sleep(1)
   end
 
@@ -46,14 +48,37 @@ describe "index ops" do
   it 'should delete by query' do
     @client.index({:deleted => "bar"}, :id => "d1")
     @client.index({:deleted => "bar"}, :id => "d2")
-    @client.refresh
+
+    @client.index({:deleted => "bar"}, :id => "d3", :index => @second_index)
+    @client.refresh(:all)
 
     @client.count(:term => { :deleted => 'bar'}).should == 2
+    @client.count({:term => { :deleted => 'bar'}}, :index => @second_index).should == 1
     @client.delete_by_query(:term => { :deleted => 'bar' })
-    @client.refresh
+    @client.refresh(:all)
     @client.count(:term => { :deleted => 'bar'}).should == 0
+    @client.count({:term => { :deleted => 'bar'}}, :index => @second_index).should == 1
   end
-  
+
+  it 'should delete by query across indices and types' do
+    @client.index({:deleted => "baz"}, :id => "d1")
+    @client.index({:deleted => "baz"}, :id => "d2")
+
+    @client.index({:deleted => "baz"}, :id => "d3", :index => @second_index)
+    @client.refresh(:all)
+
+    @client.count(:term => { :deleted => 'baz'}).should == 2
+    @client.count({:term => { :deleted => 'baz'}}, :index => @second_index).should == 1
+
+    # create a non-scoped client
+    @client2 = ElasticSearch.new('http://127.0.0.1:9200')
+    @client2.delete_by_query(:term => { :deleted => 'baz' })
+
+    @client.refresh(:all)
+    @client.count(:term => { :deleted => 'baz'}).should == 0
+    @client.count({:term => { :deleted => 'baz'}}, :index => @second_index).should == 0
+  end
+
   it 'should perform a successful multi get with an array' do
     @client.index({:foo => "bar"}, :id => "1")
     @client.index({:foo => "baz"}, :id => "2")
