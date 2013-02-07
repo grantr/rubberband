@@ -218,7 +218,7 @@ module ElasticSearch
       end
 
       def handle_error(response)
-        raise RequestError, "(#{response.status}) #{response.body}"
+        raise RequestError.new(response.status), "(#{response.status}) #{response.body}"
       end
 
       # :index - one or many index names
