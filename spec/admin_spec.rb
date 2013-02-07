@@ -48,4 +48,9 @@ describe "basic ops" do
     result = @client.get_aliases(second_index)
     result[second_index]["aliases"].keys.should include("#{second_index}-alias")
   end
+
+  it 'should provide a shortcut for index existence' do
+    @client.index_exists?(@first_index).should be_true
+    @client.index_exists?(@first_index + "abc").should_not be_true
+  end
 end

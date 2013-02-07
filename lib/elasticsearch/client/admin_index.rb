@@ -4,6 +4,16 @@ module ElasticSearch
       module Index
         PSEUDO_INDICES = [:all]
 
+        def index_exists?(index)
+          !!index_status(index)
+        rescue RequestError => e
+          if e.message =~ /missing/
+            false
+          else
+            raise e
+          end
+        end
+
         def index_status(*args)
           indices, options = extract_indices_and_options(args)
           execute(:index_status, indices, options)
