@@ -7,7 +7,7 @@ module ElasticSearch
         def index_exists?(index)
           !!index_status(index)
         rescue RequestError => e
-          if e.message =~ /missing/
+          if e.status == 404
             false
           else
             raise e
